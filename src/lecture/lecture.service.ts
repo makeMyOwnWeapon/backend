@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MainLectureEntity } from '../entities/main-lecture.entity';
 import { Repository } from 'typeorm';
 import { SubLectureEntity } from '../entities/sub-lecture.entity';
+import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
 
 @Injectable()
 export class LectureService {
@@ -11,5 +12,7 @@ export class LectureService {
     private readonly mainLectureRepository: Repository<MainLectureEntity>,
     @InjectRepository(SubLectureEntity)
     private readonly subLectureRepository: Repository<SubLectureEntity>,
+    @InjectRepository(LectureImageUrlEntity)
+    private readonly lectureImageUrlRepository: Repository<LectureImageUrlEntity>,
   ) {}
 }
