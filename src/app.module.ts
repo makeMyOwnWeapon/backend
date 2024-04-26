@@ -6,6 +6,8 @@ import { LectureModule } from './lecture/lecture.module';
 import { HistoryModule } from './history/history.module';
 import { MemberModule } from './member/member.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     LectureModule,
     HistoryModule,
     MemberModule,
+    QuizModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {
