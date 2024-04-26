@@ -1,1 +1,4 @@
-# 학습 도우미 서비스(가제) 백엔드
+# 로아(LearnOnAir) 백엔드
+
+## ERD
+<img src="./images/erd-v0.1.png">
