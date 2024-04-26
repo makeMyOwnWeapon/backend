@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 import { VideoAnalyticsHistoryEntity } from '../entities/video-analytics-history.entity';
 import { GptUsageHistoryEntity } from '../entities/gpt-usage-history';
+import { QuizResultEntity } from '../entities/quiz-result.entity';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { GptUsageHistoryEntity } from '../entities/gpt-usage-history';
       LectureHistoryEntity,
       VideoAnalyticsHistoryEntity,
       GptUsageHistoryEntity,
+      QuizResultEntity,
     ]),
   ],
   providers: [HistoryService],
