@@ -8,7 +8,7 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   host: 'localhost',
   port: 3306,
   username: 'root',
-  password: '',
+  password: 'rkdwndnjs123!',
   database: 'test-namanmu',
   autoLoadEntities: true,
   synchronize: true,

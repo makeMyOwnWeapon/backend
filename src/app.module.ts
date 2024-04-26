@@ -5,12 +5,12 @@ import { DataSource } from 'typeorm';
 import { LectureModule } from './lecture/lecture.module';
 import { HistoryModule } from './history/history.module';
 import { MemberModule } from './member/member.module';
-import { ConfigModule } from '@nestjs/config';
-import { envConfig } from './configs/env.config';
+//import { ConfigModule } from '@nestjs/config';
+// import { envConfig } from './configs/env.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(envConfig),
+    // ConfigModule.forRoot(envConfig),
     TypeOrmCoreModule.forRoot(typeORMConfig),
     LectureModule,
     HistoryModule,

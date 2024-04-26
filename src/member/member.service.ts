@@ -9,4 +9,15 @@ export class MemberService {
     @InjectRepository(MemberEntity)
     private readonly memberRepository: Repository<MemberEntity>,
   ) {}
+
+  createMember(memberEntity): Promise<MemberEntity> {
+    return this.memberRepository.save(memberEntity);
+  }
+
+  async getMember(oauthId: string) {
+    const result = await this.memberRepository.findOne({
+      where: { oauthId },
+    });
+    return result;
+  }
 }

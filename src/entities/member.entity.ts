@@ -16,13 +16,13 @@ export class MemberEntity extends DefaultEntity {
 
   @OneToMany(
     () => LectureHistoryEntity,
-    (lectureHistory) => lectureHistory.member
+    (lectureHistory) => lectureHistory.member,
   )
   lectureHistories: LectureHistoryEntity[];
 
   @OneToMany(
     () => GptUsageHistoryEntity,
-    (gptUsageHistory) => gptUsageHistory.member
+    (gptUsageHistory) => gptUsageHistory.member,
   )
   gptUsageHistories: GptUsageHistoryEntity[];
 }
