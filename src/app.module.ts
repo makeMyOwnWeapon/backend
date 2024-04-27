@@ -8,11 +8,21 @@ import { MemberModule } from './member/member.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { QuizModule } from './quiz/quiz.module';
+import { AuthModule } from './auth/auth.module';
+//import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    // JwtModule.registerAsync({
+    //   global: true,
+    //   useFactory: async (config: ConfigService) => ({
+    //     secret: await config.get<string>('JWT_SECRET'),
+    //     signOptions: await { expiresIn: config.get<string>('expiresIn') },
+    //   }),
+    //   inject: [ConfigService],
+    // }),
     TypeOrmCoreModule.forRootAsync({
-      imports: [ConfigModule],
       useFactory: async (configService: ConfigService) =>
         await getTypeOrmConfig(configService),
       inject: [ConfigService],
@@ -20,6 +30,7 @@ import { QuizModule } from './quiz/quiz.module';
     LectureModule,
     HistoryModule,
     MemberModule,
+    AuthModule,
     QuizModule,
   ],
   controllers: [AppController],

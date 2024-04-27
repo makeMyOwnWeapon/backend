@@ -10,11 +10,11 @@ export class MemberService {
     private readonly memberRepository: Repository<MemberEntity>,
   ) {}
 
-  createMember(memberEntity): Promise<MemberEntity> {
+  signup(memberEntity): Promise<MemberEntity> {
     return this.memberRepository.save(memberEntity);
   }
 
-  async getMember(oauthId: string) {
+  async signin(oauthId): Promise<MemberEntity> {
     const result = await this.memberRepository.findOne({
       where: { oauthId },
     });

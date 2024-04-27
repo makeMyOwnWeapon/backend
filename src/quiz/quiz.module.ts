@@ -5,6 +5,7 @@ import { QuizEntity } from '../entities/quiz.entity';
 import { QuizSetEntity } from '../entities/quiz-set.entity';
 import { ChoiceEntity } from '../entities/choice.entity';
 import { RecommendationEntity } from '../entities/recommendation-entity';
+import { QuizController } from './quiz.controller';
 
 @Module({
   imports: [
@@ -16,5 +17,6 @@ import { RecommendationEntity } from '../entities/recommendation-entity';
     ]),
   ],
   providers: [QuizService],
+  controllers: [QuizController],
 })
 export class QuizModule {}
