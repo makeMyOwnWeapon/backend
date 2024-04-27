@@ -18,7 +18,4 @@ export class QuizService {
     @InjectRepository(RecommendationEntity)
     private readonly recommendationRepository: Repository<RecommendationEntity>,
   ) {}
-  createLecture(quiz) {
-    return '';
-  }
 }
