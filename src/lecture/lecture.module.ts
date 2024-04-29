@@ -13,6 +13,7 @@ import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
       LectureImageUrlEntity,
     ]),
   ],
-  providers: [LectureService],
+  providers: [LectureService, TypeOrmModule],
+  exports: [LectureService, TypeOrmModule],
 })
 export class LectureModule {}

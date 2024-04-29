@@ -10,6 +10,15 @@ export class MemberService {
     @InjectRepository(MemberEntity)
     private readonly memberRepository: Repository<MemberEntity>,
   ) {}
+  async retrieveMemberEntity(memberId): Promise<MemberEntity> {
+    const memberEntity = await this.memberRepository.findOne({
+      where: { id: memberId },
+    });
+    if (!memberEntity) {
+      throw new Error('member not found');
+    }
+    return memberEntity;
+  }
 
   async signup(memberEntity: MemberEntity): Promise<SigninDto> {
     const result = await this.memberRepository.save(memberEntity);
