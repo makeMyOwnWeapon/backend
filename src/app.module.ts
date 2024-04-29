@@ -9,19 +9,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { QuizModule } from './quiz/quiz.module';
 import { AuthModule } from './auth/auth.module';
-//import { JwtModule } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    // JwtModule.registerAsync({
-    //   global: true,
-    //   useFactory: async (config: ConfigService) => ({
-    //     secret: await config.get<string>('JWT_SECRET'),
-    //     signOptions: await { expiresIn: config.get<string>('expiresIn') },
-    //   }),
-    //   inject: [ConfigService],
-    // }),
+    JwtModule.registerAsync({
+      global: true,
+      useFactory: async (config: ConfigService) => ({
+        secret: await config.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: await config.get<string>('EXPIRES_IN') },
+      }),
+      inject: [ConfigService],
+    }),
     TypeOrmCoreModule.forRootAsync({
       useFactory: async (configService: ConfigService) =>
         await getTypeOrmConfig(configService),
