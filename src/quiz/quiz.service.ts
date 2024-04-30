@@ -106,6 +106,7 @@ export class QuizService {
           where: { quizSet: { id: quizSet.id } },
         });
         return {
+          quizSetId: quizSet.id,
           quizSetTitle: quizSet.title,
           subLectureTitle: quizSet.subLecture.title,
           subLectureUrl: quizSet.subLecture.url,

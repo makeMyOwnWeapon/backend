@@ -1,6 +1,8 @@
 import { IsString, IsInt } from 'class-validator';
 
 export class ReadQuizSetDTO {
+  @IsInt()
+  quizSetId: number;
   @IsString()
   quizSetTitle: string;
   @IsString()
