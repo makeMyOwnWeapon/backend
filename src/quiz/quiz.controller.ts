@@ -13,7 +13,7 @@ export class QuizController {
   ) {}
 
   private extractSubFromToken(authHeader: string): string | null {
-    const token = authHeader?.split(' ')[1].split('"')[1]; // Bearer 토큰 추출
+    const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
     if (!token) {
       return null;
     }
@@ -30,9 +30,6 @@ export class QuizController {
     @Body() quizInfo: CreateQuizSetDTO,
     @Headers('Authorization') authHeader: string,
   ) {
-    console.log('authHeader: ', authHeader);
-    console.log('quizInfo: ', quizInfo);
-
     const mainLectureId = await this.lectureService.insertMainLectures(
       quizInfo.mainLectureTitle,
       quizInfo.lecturerName,
@@ -63,7 +60,6 @@ export class QuizController {
         );
       }
     }
-    console.log(quizSetsId);
     return quizSetsId;
   }
 }
