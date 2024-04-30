@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Headers, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Headers,
+  Get,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
 import { LectureService } from 'src/lecture/lecture.service';
@@ -40,6 +48,39 @@ export class QuizController {
   async readQuiz() {
     const quizSetDetails = await this.quizService.readQuizSet();
     return quizSetDetails;
+  }
+
+  /*
+  요청:
+GET   /api/quizsets/{quizsetsId}/quizzes?choices={}&commentary={}   
+Path & Query
+quizsetsId : 문제집의 id, commentary(해설 제공여부),
+choices(선택지 제공여부)
+(제공 여부는 true or false이다.)
+
+응답: 
+[
+  문제, 
+  해설,
+  팝업 시각, 
+  [
+    선택지id,
+    내용,
+    정답 여부
+  ]
+]
+*/
+  @Get('/:quizsetId/quizzes')
+  async getQuizDetails(
+    @Param('quizsetId') quizsetId: number,
+    @Query('commentary') isSeeCommentary: boolean,
+    @Query('answer') isSeeAnswer: boolean,
+  ) {
+    return this.quizService.readQuizDetails(
+      quizsetId,
+      isSeeCommentary,
+      isSeeAnswer,
+    );
   }
 
   @Post('')

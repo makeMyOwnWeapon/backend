@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QuizEntity } from '../entities/quiz.entity';
@@ -118,5 +123,46 @@ export class QuizService {
     );
 
     return allQuizSet;
+  }
+
+  async readQuizDetails(
+    quizSetId: number,
+    isSeeCommentary: boolean,
+    isSeeAnswer: boolean,
+  ): Promise<any[]> {
+    // 문제집의 id에 해당하는 퀴즈를 찾음
+    const quizzes = await this.quizRepository.find({
+      where: { quizSet: { id: quizSetId } },
+    });
+    if (!quizzes || quizzes.length === 0) {
+      throw new NotFoundException(
+        'No quizzes found for the provided quiz set id.',
+      );
+    }
+
+    const quizDetails = [];
+    for (const quiz of quizzes) {
+      // 퀴즈의 선택지 정보를 가져오는 경우
+      let choiceDetails = [];
+
+      const choices = await this.choiceRepository.find({
+        where: { quiz: { id: quiz.id } },
+      });
+      choiceDetails = choices.map((choice) => ({
+        choiceId: choice.id,
+        content: choice.content,
+        ...(isSeeAnswer && { isAnswer: choice.isAnswer }), // isSeeAnswer가 true일 때만 isAnswer를 추가
+      }));
+
+      // 퀴즈 상세 정보를 배열에 추가
+      quizDetails.push({
+        instruction: quiz.instruction,
+        ...(isSeeCommentary && { commentary: quiz.commentary }), // isSeeCommentary true일 때만 commentary를 추가
+        popupTime: quiz.popupTime,
+        choice: choiceDetails,
+      });
+    }
+
+    return quizDetails;
   }
 }
