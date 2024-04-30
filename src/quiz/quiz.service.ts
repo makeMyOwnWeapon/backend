@@ -7,6 +7,7 @@ import { ChoiceEntity } from '../entities/choice.entity';
 import { RecommendationEntity } from '../entities/recommendation-entity';
 import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
+import { ReadQuizSetDTO } from './dto/quiz_sets.dto';
 
 @Injectable()
 export class QuizService {
@@ -89,5 +90,32 @@ export class QuizService {
     await this.choiceRepository.save(newChoices);
 
     return newChoices.id;
+  }
+
+  async readQuizSet(): Promise<ReadQuizSetDTO[]> {
+    const quizSets = await this.quizSetRepository.find({
+      relations: ['subLecture', 'member', 'recommendations'],
+      //relations: quizSetRepository와 관계된 엔티티의 정보를 함께 로드
+    });
+
+    const allQuizSet: ReadQuizSetDTO[] = await Promise.all(
+      //가져온 quiz_sets를 순회하면서 각 quiz_sets의 정보를 ReadQuizSetDTO 형식으로 매핑
+      quizSets.map(async (quizSet) => {
+        //quizSets을 순회하면서 각 요소인 quizSet에 접근하여 필요로하는 값들을 리턴
+        const recommendationCount = await this.recommendationRepository.count({
+          where: { quizSet: { id: quizSet.id } },
+        });
+        return {
+          quizSetTitle: quizSet.title,
+          subLectureTitle: quizSet.subLecture.title,
+          subLectureUrl: quizSet.subLecture.url,
+          memberNickname: quizSet.member.nickname,
+          createdAt: quizSet.createdAt,
+          recommendationCount: recommendationCount,
+        };
+      }),
+    );
+
+    return allQuizSet;
   }
 }

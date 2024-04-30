@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Headers } from '@nestjs/common';
+import { Body, Controller, Post, Headers, Get } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
 import { LectureService } from 'src/lecture/lecture.service';
@@ -24,6 +24,23 @@ export class QuizController {
       return null;
     }
   }
+  /*
+@Get('')
+들어오는 데이터: 멤버id
+리턴해야할 데이터:
+[
+  문제집명(quiz_sets title), 
+  소강의명(sub_lectures title),
+  등록자 닉네임(members nickname),
+  작성일자(quiz_sets created_at),
+  추천수(recommendations quiz_set_id 갯수)
+]
+*/
+  @Get('')
+  async readQuiz() {
+    const quizSetDetails = await this.quizService.readQuizSet();
+    return quizSetDetails;
+  }
 
   @Post('')
   async createQuiz(
@@ -46,7 +63,6 @@ export class QuizController {
       subLectureId,
       memberId,
     );
-
     for (let i = 0; i < quizInfo.quizzes.length; i++) {
       const quizzesId = await this.quizService.insertQuizzes(
         quizInfo.quizzes[i],
@@ -60,10 +76,12 @@ export class QuizController {
         );
       }
     }
+
     return quizSetsId;
   }
 }
 /* 
+@Post('')
 body에 들어오는 데이터:
 
 mainLectureTitle(대강의명), main_lectures 
@@ -81,12 +99,4 @@ title(문제집명), quiz_sets 1
         isAnswer(정답여부) choices 2
     ]
 ]
-
-todo: 
-1. quizset에 대한 dto생성
-2. 서비스에 넘겨주기
-3. 서비스에서 여러 레퍼지토리를 가지고 저장하기
-3.1 문제집 저장
-3.2 문제 저장
-3.3 선택지 저장
 */
