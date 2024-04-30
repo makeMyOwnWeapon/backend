@@ -1,4 +1,30 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Headers, HttpStatus, Res } from '@nestjs/common';
+import { ExtensionAuthResponseDto } from './dto/ExtensionAuthResponse.dto';
+import { MemberService } from '../member/member.service';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
 
 @Controller('auth')
-export class AuthController {}
+export class AuthController {
+  constructor(
+    private memberService: MemberService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
+
+  @Get('extension')
+  async authForExtension(@Headers('Authorization') authHeader: string, @Res() res: Response): Promise<ExtensionAuthResponseDto | Response<void>> {
+    if (!authHeader) {
+      return res.status(HttpStatus.BAD_REQUEST).send();
+    }
+    const signinDto = await this.memberService.signin(authHeader);
+    if (!signinDto) {
+      return res.status(HttpStatus.NO_CONTENT).send();
+    }
+    const token = this.jwtService.sign(signinDto, {
+      expiresIn: this.configService.get('EXTENSION_EXPIRES_IN'),
+    });
+    return res.send({ token });
+  }
+}
