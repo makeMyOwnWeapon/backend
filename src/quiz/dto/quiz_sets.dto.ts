@@ -16,3 +16,11 @@ export class ReadQuizSetDTO {
   @IsInt()
   recommendationCount: number;
 }
+
+// ReadSertainLectureQuizDTO
+export class ReadSertainLectureQuizDTO {
+  quizSetTitle: string;
+  quizSetAuthor: string;
+  recommendationCount: number;
+  createdAt: Date;
+}

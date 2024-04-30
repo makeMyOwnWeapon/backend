@@ -12,7 +12,7 @@ import { ChoiceEntity } from '../entities/choice.entity';
 import { RecommendationEntity } from '../entities/recommendation-entity';
 import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
-import { ReadQuizSetDTO } from './dto/quiz_sets.dto';
+import { ReadQuizSetDTO, ReadSertainLectureQuizDTO } from './dto/quiz_sets.dto';
 
 @Injectable()
 export class QuizService {
@@ -164,5 +164,31 @@ export class QuizService {
     }
 
     return quizDetails;
+  }
+
+  async searchQuizSets(
+    subLectureUrl: string,
+    mainLectureTitle: string,
+    subLectureTitle: string,
+  ): Promise<ReadSertainLectureQuizDTO[]> {
+    const quizSets = await this.quizSetRepository.find({
+      where: {
+        subLecture: { url: subLectureUrl },
+      },
+      relations: ['member', 'recommendations'],
+    });
+
+    const quizSetDetails: ReadSertainLectureQuizDTO[] = quizSets.map(
+      (quizSet) => {
+        return {
+          quizSetTitle: quizSet.title,
+          quizSetAuthor: quizSet.member.nickname,
+          recommendationCount: quizSet.recommendations.length,
+          createdAt: quizSet.createdAt,
+        };
+      },
+    );
+
+    return quizSetDetails;
   }
 }

@@ -11,6 +11,7 @@ import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
 import { LectureService } from 'src/lecture/lecture.service';
 import { JwtService } from '@nestjs/jwt';
+import { ReadSertainLectureQuizDTO } from './dto/quiz_sets.dto';
 
 @Controller('quizsets')
 export class QuizController {
@@ -31,6 +32,29 @@ export class QuizController {
     } catch (error) {
       return null;
     }
+  }
+  /*요청: 
+GET  /api/quizsets?subLectureUrl={subLectureUrl}&mainLectureTitle={mainLectureTitle}
+&subLectureTitle={subLectureTitle}
+Query
+subLectureUrl(강의 url), subLectureTitle(소강의명), 
+mainLectureTitle(대강의명)
+
+반환:
+[문제집명, 문제집 작성자, 
+추천수, 작성일자]
+*/
+  @Get('')
+  async searchQuizSets(
+    @Query('subLectureUrl') subLectureUrl: string,
+    @Query('mainLectureTitle') mainLectureTitle: string,
+    @Query('subLectureTitle') subLectureTitle: string,
+  ): Promise<ReadSertainLectureQuizDTO[]> {
+    return this.quizService.searchQuizSets(
+      subLectureUrl,
+      mainLectureTitle,
+      subLectureTitle,
+    );
   }
   /*
 @Get('')
@@ -83,6 +107,26 @@ choices(선택지 제공여부)
     );
   }
 
+  /* 
+@Post('')
+body에 들어오는 데이터:
+
+mainLectureTitle(대강의명), main_lectures 
+lecturerName(강사명), main_lectures
+subLectureUrl(강의 url), sub_lectures 1
+subLectureTitle(소강의명), sub_lectures
+duration(강의시간, 초단위 정수), sub_lectures
+title(문제집명), quiz_sets 1
+[
+    instruction(문제), quizzes 2
+    commentary(해설), quizzes 2
+    popupTime(팝업시각, 'hh:mm:ss'), quizzes 1
+    [
+        content(선택지), choices 2
+        isAnswer(정답여부) choices 2
+    ]
+]
+*/
   @Post('')
   async createQuiz(
     @Body() quizInfo: CreateQuizSetDTO,
@@ -121,23 +165,3 @@ choices(선택지 제공여부)
     return quizSetsId;
   }
 }
-/* 
-@Post('')
-body에 들어오는 데이터:
-
-mainLectureTitle(대강의명), main_lectures 
-lecturerName(강사명), main_lectures
-subLectureUrl(강의 url), sub_lectures 1
-subLectureTitle(소강의명), sub_lectures
-duration(강의시간, 초단위 정수), sub_lectures
-title(문제집명), quiz_sets 1
-[
-    instruction(문제), quizzes 2
-    commentary(해설), quizzes 2
-    popupTime(팝업시각, 'hh:mm:ss'), quizzes 1
-    [
-        content(선택지), choices 2
-        isAnswer(정답여부) choices 2
-    ]
-]
-*/
