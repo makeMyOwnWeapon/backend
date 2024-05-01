@@ -156,6 +156,7 @@ export class QuizService {
 
       // 퀴즈 상세 정보를 배열에 추가
       quizDetails.push({
+        quizId: quiz.id,
         instruction: quiz.instruction,
         ...(isSeeCommentary && { commentary: quiz.commentary }), // isSeeCommentary true일 때만 commentary를 추가
         popupTime: quiz.popupTime,
@@ -166,29 +167,29 @@ export class QuizService {
     return quizDetails;
   }
 
-  async searchQuizSets(
-    subLectureUrl: string,
-    mainLectureTitle: string,
-    subLectureTitle: string,
-  ): Promise<ReadSertainLectureQuizDTO[]> {
+  async readSertainQuizSets(subLectureUrl: string) {
     const quizSets = await this.quizSetRepository.find({
       where: {
         subLecture: { url: subLectureUrl },
       },
       relations: ['member', 'recommendations'],
+      //relations: quizSetRepository와 관계된 엔티티의 정보를 함께 로드
     });
-
-    const quizSetDetails: ReadSertainLectureQuizDTO[] = quizSets.map(
-      (quizSet) => {
+    const allQuizSet: ReadSertainLectureQuizDTO[] = await Promise.all(
+      quizSets.map(async (quizSet) => {
+        const recommendationCount = await this.recommendationRepository.count({
+          where: { quizSet: { id: quizSet.id } },
+        });
         return {
+          quizSetId: quizSet.id,
           quizSetTitle: quizSet.title,
           quizSetAuthor: quizSet.member.nickname,
-          recommendationCount: quizSet.recommendations.length,
+          recommendationCount,
           createdAt: quizSet.createdAt,
         };
-      },
+      }),
     );
 
-    return quizSetDetails;
+    return allQuizSet;
   }
 }

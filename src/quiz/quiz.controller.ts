@@ -11,7 +11,6 @@ import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
 import { LectureService } from 'src/lecture/lecture.service';
 import { JwtService } from '@nestjs/jwt';
-import { ReadSertainLectureQuizDTO } from './dto/quiz_sets.dto';
 
 @Controller('quizsets')
 export class QuizController {
@@ -27,15 +26,14 @@ export class QuizController {
       return null;
     }
     try {
-      const sub = this.jwtService.decode(token).sub;
-      return sub;
+      const memberId = this.jwtService.decode(token).id;
+      return memberId;
     } catch (error) {
       return null;
     }
   }
   /*요청: 
-GET  /api/quizsets?subLectureUrl={subLectureUrl}&mainLectureTitle={mainLectureTitle}
-&subLectureTitle={subLectureTitle}
+GET  /api/quizsets?subLectureUrl={subLectureUrl}&mainLectureTitle={mainLectureTitle}&subLectureTitle={subLectureTitle}
 Query
 subLectureUrl(강의 url), subLectureTitle(소강의명), 
 mainLectureTitle(대강의명)
@@ -43,20 +41,7 @@ mainLectureTitle(대강의명)
 반환:
 [문제집명, 문제집 작성자, 
 추천수, 작성일자]
-*/
-  @Get('')
-  async searchQuizSets(
-    @Query('subLectureUrl') subLectureUrl: string,
-    @Query('mainLectureTitle') mainLectureTitle: string,
-    @Query('subLectureTitle') subLectureTitle: string,
-  ): Promise<ReadSertainLectureQuizDTO[]> {
-    return this.quizService.searchQuizSets(
-      subLectureUrl,
-      mainLectureTitle,
-      subLectureTitle,
-    );
-  }
-  /*
+
 @Get('')
 들어오는 데이터: 멤버id
 리턴해야할 데이터:
@@ -68,10 +53,17 @@ mainLectureTitle(대강의명)
   추천수(recommendations quiz_set_id 갯수)
 ]
 */
-  @Get('')
-  async readQuiz() {
-    const quizSetDetails = await this.quizService.readQuizSet();
-    return quizSetDetails;
+  @Get('/')
+  async readQuiz(@Query('subLectureUrl') subLectureUrlEncoded: string) {
+    if (subLectureUrlEncoded) {
+      const subLectureUrl = Buffer.from(
+        subLectureUrlEncoded,
+        'base64',
+      ).toString('utf-8');
+      return await this.quizService.readSertainQuizSets(subLectureUrl);
+    } else {
+      return await this.quizService.readQuizSet();
+    }
   }
 
   /*
