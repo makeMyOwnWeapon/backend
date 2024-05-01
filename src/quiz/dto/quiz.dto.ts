@@ -23,7 +23,7 @@ export class QuizDTO {
   commentary: string;
 
   @IsString()
-  popupTime: number; // 초 단위 정수
+  popupTime: string; // 초 단위 정수
 
   @ValidateNested()
   @Type(() => ChoiceDTO)

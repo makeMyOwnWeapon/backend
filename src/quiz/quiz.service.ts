@@ -63,6 +63,27 @@ export class QuizService {
     return newQuizSets.id;
   }
 
+  private popupTimeChangeSecond(popupTime: string): number | null {
+    if (!popupTime) {
+      throw new HttpException(
+        'Invalid input: popupTime is required',
+        HttpStatus.PRECONDITION_FAILED,
+      );
+    }
+
+    const time = popupTime.split(':').map(Number); // 문자열을 ':'를 기준으로 분리하여 숫자 배열로 변환
+    if (time.length !== 3) {
+      throw new HttpException(
+        'Invalid input: popupTime must be in the format "HH:MM:SS"',
+        HttpStatus.PRECONDITION_FAILED,
+      );
+    }
+
+    const second = time[0] * 3600 + time[1] * 60 + time[2]; // 시간, 분, 초를 초로 변환
+    console.log(second);
+    return second;
+  }
+
   async insertQuizzes(quizzes, quizSetsId): Promise<number> {
     const quizSets = await this.quizSetRepository.findOne({
       where: { id: quizSetsId },
@@ -75,7 +96,7 @@ export class QuizService {
       quizSet: quizSets,
       instruction: quizzes.instruction,
       commentary: quizzes.commentary,
-      popupTime: quizzes.popupTime,
+      popupTime: this.popupTimeChangeSecond(quizzes.popupTime),
     });
     await this.quizRepository.save(newQuizzes);
     return newQuizzes.id;
