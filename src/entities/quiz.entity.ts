@@ -16,8 +16,8 @@ export class QuizEntity extends DefaultEntity {
   @Column()
   commentary: string;
 
-  @Column('time', { nullable: false })
-  popupTime: string;
+  @Column({ nullable: false })
+  popupTime: number;
 
   @OneToMany(() => ChoiceEntity, (choice) => choice.quiz)
   choices: ChoiceEntity[];
