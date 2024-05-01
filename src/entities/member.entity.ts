@@ -47,4 +47,6 @@ export class MemberEntity extends DefaultEntity {
 
   @OneToMany(() => QuizResultEntity, (quizResults) => quizResults.member)
   quizResults: QuizResultEntity[];
+
+
 }

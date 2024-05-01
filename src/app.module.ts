@@ -10,6 +10,8 @@ import { AppController } from './app.controller';
 import { QuizModule } from './quiz/quiz.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AnalyticsModule } from './analytics/analytics.module';
+
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { JwtModule } from '@nestjs/jwt';
     MemberModule,
     AuthModule,
     QuizModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [],
