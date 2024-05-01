@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MemberEntity } from '../entities/member.entity';
 import { SigninDto } from './dto/member.dto';
+import { FetchOAuthIdResponseDto } from './dto/fetchOAuthIdResponse.dto';
 
 @Injectable()
 export class MemberService {
@@ -38,5 +39,12 @@ export class MemberService {
     }
     const { id, authorizationCode, nickname } = result;
     return { id, authorizationCode, nickname };
+  }
+
+  async retrieveOAuthId(memberId: number): Promise<FetchOAuthIdResponseDto> {
+    return await this.memberRepository.findOne({
+      select: { oauthId: true },
+      where: { id: memberId },
+    });
   }
 }
