@@ -3,15 +3,18 @@
 import { Body, Controller, Get, Headers, HttpStatus, Post, Res } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import {AnalyticsOccurRequestDto} from "./dto/AnalyticsOccurRequest.dto"
-import { CreateQuizSetDTO } from "../quiz/dto/quiz.dto";
-import { MemberEntity } from "../entities/member.entity";
 import { MemberService } from "../member/member.service";
+import { LectureService } from "../lecture/lecture.service";
+import { AnalyticsService } from "../analytics/analytics.service";
+
 import { Response } from "express";
 
 @Controller('analytics')
 export class AnalyticsController {
   constructor(private jwtService: JwtService,
-              private memberService: MemberService
+              private memberService: MemberService,
+              private lectureService: LectureService,
+              private analyticsService: AnalyticsService
   ) {}
   private getMemberIdByJwt(jwt: string): string | null {
       const parsedJwt = jwt?.split(' ')[1]; // Bearer 토큰 추출
@@ -41,7 +44,6 @@ export class AnalyticsController {
     const memberId = this.getMemberIdByJwt(jwt);
     const memberEntity = await this.memberService.retrieveMemberEntity(memberId);
 
-
     return 'OK';
   }
 
@@ -52,13 +54,12 @@ export class AnalyticsController {
     @Body() analyticsOccurRequestDto:AnalyticsOccurRequestDto,
     @Res() res: Response
   ) {
-
-    // JWT로 회원 조회
-    const memberId = this.getMemberIdByJwt(jwt);
-    const memberEntity = await this.memberService.retrieveMemberEntity(memberId);
-
     try {
-      // 여기서 analyticsOccurRequestDto를 사용하여 필요한 로직을 구현합니다. 예를 들어, 서비스 메서드 호출.
+      const memberId = this.getMemberIdByJwt(jwt);
+      const memberEntity = await this.memberService.retrieveMemberEntity(memberId);
+      const sub_lecture_entity = await this.lectureService.retrieveSubLectureEntity(Number(analyticsOccurRequestDto.sublectureId));
+      const videoAnalyticsHistoryEntity = analyticsOccurRequestDto.toEntity(sub_lecture_entity, memberEntity);
+      await this.analyticsService.saveVideoAnalyticsHistory(videoAnalyticsHistoryEntity);
 
       return res.status(HttpStatus.OK).json({
         message: '데이터가 성공적으로 처리되었습니다.',
