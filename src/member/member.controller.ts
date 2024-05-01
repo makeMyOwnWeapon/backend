@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, Headers, BadRequestException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Headers,
+  BadRequestException,
+} from '@nestjs/common';
 import { MemberEntity } from '../entities/member.entity';
 import { MemberService } from './member.service';
 import { JwtService } from '@nestjs/jwt';
