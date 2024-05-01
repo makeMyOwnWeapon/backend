@@ -12,7 +12,7 @@ import { ChoiceEntity } from '../entities/choice.entity';
 import { RecommendationEntity } from '../entities/recommendation-entity';
 import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
-import { ReadQuizSetDTO, ReadSertainLectureQuizDTO } from './dto/quiz_sets.dto';
+import { ReadQuizSetDTO, ReadCertainLectureQuizDTO } from './dto/quiz_sets.dto';
 
 @Injectable()
 export class QuizService {
@@ -167,7 +167,7 @@ export class QuizService {
     return quizDetails;
   }
 
-  async readSertainQuizSets(subLectureUrl: string) {
+  async readCertainQuizSets(subLectureUrl: string) {
     const quizSets = await this.quizSetRepository.find({
       where: {
         subLecture: { url: subLectureUrl },
@@ -175,7 +175,7 @@ export class QuizService {
       relations: ['member', 'recommendations'],
       //relations: quizSetRepository와 관계된 엔티티의 정보를 함께 로드
     });
-    const allQuizSet: ReadSertainLectureQuizDTO[] = await Promise.all(
+    const allQuizSet: ReadCertainLectureQuizDTO[] = await Promise.all(
       quizSets.map(async (quizSet) => {
         const recommendationCount = await this.recommendationRepository.count({
           where: { quizSet: { id: quizSet.id } },

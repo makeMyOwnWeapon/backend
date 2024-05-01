@@ -18,9 +18,15 @@ export class ReadQuizSetDTO {
 }
 
 // ReadSertainLectureQuizDTO
-export class ReadSertainLectureQuizDTO {
+export class ReadCertainLectureQuizDTO {
+  @IsInt()
+  quizSetId: number;
+  @IsString()
   quizSetTitle: string;
+  @IsString()
   quizSetAuthor: string;
+  @IsInt()
   recommendationCount: number;
+  @IsString()
   createdAt: Date;
 }

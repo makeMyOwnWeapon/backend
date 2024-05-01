@@ -56,11 +56,9 @@ mainLectureTitle(대강의명)
   @Get('/')
   async readQuiz(@Query('subLectureUrl') subLectureUrlEncoded: string) {
     if (subLectureUrlEncoded) {
-      const subLectureUrl = Buffer.from(
-        subLectureUrlEncoded,
-        'base64',
-      ).toString('utf-8');
-      return await this.quizService.readSertainQuizSets(subLectureUrl);
+      const subLectureUrl = decodeURIComponent(subLectureUrlEncoded);
+      console.log('subLectureUrl: ', subLectureUrl);
+      return await this.quizService.readCertainQuizSets(subLectureUrl);
     } else {
       return await this.quizService.readQuizSet();
     }
@@ -129,7 +127,7 @@ title(문제집명), quiz_sets 1
       quizInfo.lecturerName,
     );
     const subLectureId = await this.lectureService.insertSubLectures(
-      quizInfo.subLectureUrl,
+      decodeURIComponent(quizInfo.subLectureUrl),
       quizInfo.subLectureTitle,
       quizInfo.duration,
       mainLectureId,
