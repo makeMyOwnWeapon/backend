@@ -12,7 +12,7 @@ export class MemberController {
   ) {}
 
   private extractSubFromToken(authHeader: string): string | null {
-    const token = authHeader?.split(' ')[1].split('"')[1]; // Bearer 토큰 추출
+    const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
     if (!token) {
       return null;
     }

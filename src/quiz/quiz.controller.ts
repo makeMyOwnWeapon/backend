@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Headers } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Headers,
+  Get,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
 import { LectureService } from 'src/lecture/lecture.service';
@@ -13,57 +21,84 @@ export class QuizController {
   ) {}
 
   private extractSubFromToken(authHeader: string): string | null {
-    const token = authHeader?.split(' ')[1].split('"')[1]; // Bearer 토큰 추출
+    const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
     if (!token) {
       return null;
     }
     try {
-      const sub = this.jwtService.decode(token).sub;
-      return sub;
+      const memberId = this.jwtService.decode(token).id;
+      return memberId;
     } catch (error) {
       return null;
     }
   }
+  /*요청: 
+GET  /api/quizsets?subLectureUrl={subLectureUrl}&mainLectureTitle={mainLectureTitle}&subLectureTitle={subLectureTitle}
+Query
+subLectureUrl(강의 url), subLectureTitle(소강의명), 
+mainLectureTitle(대강의명)
 
-  @Post('')
-  async createQuiz(
-    @Body() quizInfo: CreateQuizSetDTO,
-    @Headers('Authorization') authHeader: string,
-  ) {
-    const mainLectureId = await this.lectureService.insertMainLectures(
-      quizInfo.mainLectureTitle,
-      quizInfo.lecturerName,
-    );
-    const subLectureId = await this.lectureService.insertSubLectures(
-      quizInfo.subLectureUrl,
-      quizInfo.subLectureTitle,
-      quizInfo.duration,
-      mainLectureId,
-    );
-    const memberId = this.extractSubFromToken(authHeader);
-    const quizSetsId = await this.quizService.insertQuizSets(
-      quizInfo.title,
-      subLectureId,
-      memberId,
-    );
+반환:
+[문제집명, 문제집 작성자, 
+추천수, 작성일자]
 
-    for (let i = 0; i < quizInfo.quizzes.length; i++) {
-      const quizzesId = await this.quizService.insertQuizzes(
-        quizInfo.quizzes[i],
-        quizSetsId,
-      );
-
-      for (let j = 0; j < quizInfo.quizzes[i].choices.length; j++) {
-        await this.quizService.insertChoices(
-          quizInfo.quizzes[i].choices[j],
-          quizzesId,
-        );
-      }
+@Get('')
+들어오는 데이터: 멤버id
+리턴해야할 데이터:
+[
+  문제집명(quiz_sets title), 
+  소강의명(sub_lectures title),
+  등록자 닉네임(members nickname),
+  작성일자(quiz_sets created_at),
+  추천수(recommendations quiz_set_id 갯수)
+]
+*/
+  @Get('/')
+  async readQuiz(@Query('subLectureUrl') subLectureUrlEncoded: string) {
+    if (subLectureUrlEncoded) {
+      const subLectureUrl = decodeURIComponent(subLectureUrlEncoded);
+      console.log('subLectureUrl: ', subLectureUrl);
+      return await this.quizService.readCertainQuizSets(subLectureUrl);
+    } else {
+      return await this.quizService.readQuizSet();
     }
-    return quizSetsId;
   }
-}
-/* 
+
+  /*
+  요청:
+GET   /api/quizsets/{quizsetsId}/quizzes?choices={}&commentary={}   
+Path & Query
+quizsetsId : 문제집의 id, commentary(해설 제공여부),
+choices(선택지 제공여부)
+(제공 여부는 true or false이다.)
+
+응답: 
+[
+  문제, 
+  해설,
+  팝업 시각, 
+  [
+    선택지id,
+    내용,
+    정답 여부
+  ]
+]
+*/
+  @Get('/:quizsetId/quizzes')
+  async getQuizDetails(
+    @Param('quizsetId') quizsetId: number,
+    @Query('commentary') isSeeCommentary: boolean,
+    @Query('answer') isSeeAnswer: boolean,
+  ) {
+    return this.quizService.readQuizDetails(
+      quizsetId,
+      isSeeCommentary,
+      isSeeAnswer,
+    );
+  }
+
+  /* 
+@Post('')
 body에 들어오는 데이터:
 
 mainLectureTitle(대강의명), main_lectures 
@@ -81,12 +116,42 @@ title(문제집명), quiz_sets 1
         isAnswer(정답여부) choices 2
     ]
 ]
-
-todo: 
-1. quizset에 대한 dto생성
-2. 서비스에 넘겨주기
-3. 서비스에서 여러 레퍼지토리를 가지고 저장하기
-3.1 문제집 저장
-3.2 문제 저장
-3.3 선택지 저장
 */
+  @Post('')
+  async createQuiz(
+    @Body() quizInfo: CreateQuizSetDTO,
+    @Headers('Authorization') authHeader: string,
+  ) {
+    const mainLectureId = await this.lectureService.insertMainLectures(
+      quizInfo.mainLectureTitle,
+      quizInfo.lecturerName,
+    );
+    const subLectureId = await this.lectureService.insertSubLectures(
+      decodeURIComponent(quizInfo.subLectureUrl),
+      quizInfo.subLectureTitle,
+      quizInfo.duration,
+      mainLectureId,
+    );
+    const memberId = this.extractSubFromToken(authHeader);
+    const quizSetsId = await this.quizService.insertQuizSets(
+      quizInfo.title,
+      subLectureId,
+      memberId,
+    );
+    for (let i = 0; i < quizInfo.quizzes.length; i++) {
+      const quizzesId = await this.quizService.insertQuizzes(
+        quizInfo.quizzes[i],
+        quizSetsId,
+      );
+
+      for (let j = 0; j < quizInfo.quizzes[i].choices.length; j++) {
+        await this.quizService.insertChoices(
+          quizInfo.quizzes[i].choices[j],
+          quizzesId,
+        );
+      }
+    }
+
+    return quizSetsId;
+  }
+}

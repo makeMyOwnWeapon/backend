@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QuizEntity } from '../entities/quiz.entity';
@@ -7,6 +12,7 @@ import { ChoiceEntity } from '../entities/choice.entity';
 import { RecommendationEntity } from '../entities/recommendation-entity';
 import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
+import { ReadQuizSetDTO, ReadCertainLectureQuizDTO } from './dto/quiz_sets.dto';
 
 @Injectable()
 export class QuizService {
@@ -89,5 +95,101 @@ export class QuizService {
     await this.choiceRepository.save(newChoices);
 
     return newChoices.id;
+  }
+
+  async readQuizSet(): Promise<ReadQuizSetDTO[]> {
+    const quizSets = await this.quizSetRepository.find({
+      relations: ['subLecture', 'member', 'recommendations'],
+      //relations: quizSetRepository와 관계된 엔티티의 정보를 함께 로드
+    });
+
+    const allQuizSet: ReadQuizSetDTO[] = await Promise.all(
+      //가져온 quiz_sets를 순회하면서 각 quiz_sets의 정보를 ReadQuizSetDTO 형식으로 매핑
+      quizSets.map(async (quizSet) => {
+        //quizSets을 순회하면서 각 요소인 quizSet에 접근하여 필요로하는 값들을 리턴
+        const recommendationCount = await this.recommendationRepository.count({
+          where: { quizSet: { id: quizSet.id } },
+        });
+        return {
+          quizSetId: quizSet.id,
+          quizSetTitle: quizSet.title,
+          subLectureTitle: quizSet.subLecture.title,
+          subLectureUrl: quizSet.subLecture.url,
+          memberNickname: quizSet.member.nickname,
+          createdAt: quizSet.createdAt,
+          recommendationCount: recommendationCount,
+        };
+      }),
+    );
+
+    return allQuizSet;
+  }
+
+  async readQuizDetails(
+    quizSetId: number,
+    isSeeCommentary: boolean,
+    isSeeAnswer: boolean,
+  ): Promise<any[]> {
+    // 문제집의 id에 해당하는 퀴즈를 찾음
+    const quizzes = await this.quizRepository.find({
+      where: { quizSet: { id: quizSetId } },
+    });
+    if (!quizzes || quizzes.length === 0) {
+      throw new NotFoundException(
+        'No quizzes found for the provided quiz set id.',
+      );
+    }
+
+    const quizDetails = [];
+    for (const quiz of quizzes) {
+      // 퀴즈의 선택지 정보를 가져오는 경우
+      let choiceDetails = [];
+
+      const choices = await this.choiceRepository.find({
+        where: { quiz: { id: quiz.id } },
+      });
+      choiceDetails = choices.map((choice) => ({
+        choiceId: choice.id,
+        content: choice.content,
+        ...(isSeeAnswer && { isAnswer: choice.isAnswer }), // isSeeAnswer가 true일 때만 isAnswer를 추가
+      }));
+
+      // 퀴즈 상세 정보를 배열에 추가
+      quizDetails.push({
+        quizId: quiz.id,
+        instruction: quiz.instruction,
+        ...(isSeeCommentary && { commentary: quiz.commentary }), // isSeeCommentary true일 때만 commentary를 추가
+        popupTime: quiz.popupTime,
+        choice: choiceDetails,
+      });
+    }
+
+    return quizDetails;
+  }
+
+  async readCertainQuizSets(subLectureUrl: string) {
+    const quizSets = await this.quizSetRepository.find({
+      where: {
+        subLecture: { url: subLectureUrl },
+      },
+      relations: ['member', 'recommendations'],
+      //relations: quizSetRepository와 관계된 엔티티의 정보를 함께 로드
+    });
+    const allQuizSet: ReadCertainLectureQuizDTO[] = await Promise.all(
+      quizSets.map(async (quizSet) => {
+        const recommendationCount = await this.recommendationRepository.count({
+          where: { quizSet: { id: quizSet.id } },
+        });
+        return {
+          quizSetId: quizSet.id,
+          quizSetTitle: quizSet.title,
+          quizSetAuthor: quizSet.member.nickname,
+          recommendationCount,
+          createdAt: quizSet.createdAt,
+        };
+      }),
+    );
+
+    return allQuizSet;
   }
 }
