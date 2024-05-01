@@ -122,6 +122,7 @@ export class QuizService {
     const quizSets = await this.quizSetRepository.find({
       relations: ['subLecture', 'member', 'recommendations'],
       //relations: quizSetRepository와 관계된 엔티티의 정보를 함께 로드
+      order: { createdAt: 'DESC' },
     });
 
     const allQuizSet: ReadQuizSetDTO[] = await Promise.all(
