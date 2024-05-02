@@ -21,6 +21,13 @@ export class MemberService {
     return memberEntity;
   }
 
+  async deleteMember(memberId): Promise<number> {
+    const memberEntity = await this.retrieveMemberEntity(memberId);
+    memberEntity.oauthId = '0';
+    await this.memberRepository.save(memberEntity);
+    return 1;
+  }
+
   async signup(memberEntity: MemberEntity): Promise<SigninDto> {
     const result = await this.memberRepository.save(memberEntity);
     if (!result) {

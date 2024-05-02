@@ -31,8 +31,27 @@ export class MemberController {
     }
   }
 
+  private extractIdFromToken(authHeader: string): string | null {
+    const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
+    if (!token) {
+      return null;
+    }
+    try {
+      const memberId = this.jwtService.decode(token).id;
+      return memberId;
+    } catch (error) {
+      return null;
+    }
+  }
+
   private extractToken(authHeader: string): string | null {
     return authHeader?.split(' ')[1];
+  }
+
+  @Post('/delete')
+  async deleteMember(@Headers('Authorization') authHeader: string) {
+    const memberId = this.extractIdFromToken(authHeader);
+    return this.memberService.deleteMember(memberId);
   }
 
   @Post('/signup')

@@ -20,7 +20,7 @@ export class QuizController {
     private jwtService: JwtService,
   ) {}
 
-  private extractSubFromToken(authHeader: string): string | null {
+  private extractIdFromToken(authHeader: string): string | null {
     const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
     if (!token) {
       return null;
@@ -71,7 +71,7 @@ export class QuizController {
       quizInfo.duration,
       mainLectureId,
     );
-    const memberId = this.extractSubFromToken(authHeader);
+    const memberId = this.extractIdFromToken(authHeader);
     const quizSetsId = await this.quizService.insertQuizSets(
       quizInfo.title,
       subLectureId,
