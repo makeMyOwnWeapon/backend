@@ -10,9 +10,9 @@ import { QuizEntity } from '../entities/quiz.entity';
 import { QuizSetEntity } from '../entities/quiz-set.entity';
 import { ChoiceEntity } from '../entities/choice.entity';
 import { RecommendationEntity } from '../entities/recommendation-entity';
-import { LectureService } from 'src/lecture/lecture.service';
-import { MemberService } from 'src/member/member.service';
 import { ReadQuizSetDTO, ReadCertainLectureQuizDTO } from './dto/quiz_sets.dto';
+import { MemberEntity } from 'src/entities/member.entity';
+import { SubLectureEntity } from 'src/entities/sub-lecture.entity';
 
 @Injectable()
 export class QuizService {
@@ -25,21 +25,19 @@ export class QuizService {
     private readonly choiceRepository: Repository<ChoiceEntity>,
     @InjectRepository(RecommendationEntity)
     private readonly recommendationRepository: Repository<RecommendationEntity>,
-    private lectureService: LectureService,
-    private memberService: MemberService,
   ) {}
 
-  async insertQuizSets(title: string, subLectureId, memberId): Promise<number> {
-    const subLecture =
-      await this.lectureService.retrieveSubLectureEntity(subLectureId);
-    const member = await this.memberService.retrieveMemberEntity(memberId);
-
+  async insertQuizSets(
+    title: string,
+    subLecture: SubLectureEntity,
+    member: MemberEntity,
+  ): Promise<number> {
     // 주어진 title과 name으로 MainLectureEntity를 찾음.
     const existingQuizSets = await this.quizSetRepository.findOne({
       where: {
         title,
-        member: { id: memberId },
-        subLecture: { id: subLectureId },
+        member: { id: member.id },
+        subLecture: { id: subLecture.id },
       },
     });
 

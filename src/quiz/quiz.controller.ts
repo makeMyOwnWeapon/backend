@@ -10,6 +10,7 @@ import {
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
 import { LectureService } from 'src/lecture/lecture.service';
+import { MemberService } from 'src/member/member.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('quizsets')
@@ -17,6 +18,7 @@ export class QuizController {
   constructor(
     private quizService: QuizService,
     private lectureService: LectureService,
+    private memberService: MemberService,
     private jwtService: JwtService,
   ) {}
 
@@ -72,10 +74,13 @@ export class QuizController {
       mainLectureId,
     );
     const memberId = this.extractIdFromToken(authHeader);
+    const subLecture =
+      await this.lectureService.retrieveSubLectureEntity(subLectureId);
+    const member = await this.memberService.retrieveMemberEntity(memberId);
     const quizSetsId = await this.quizService.insertQuizSets(
       quizInfo.title,
-      subLectureId,
-      memberId,
+      subLecture,
+      member,
     );
     for (let i = 0; i < quizInfo.quizzes.length; i++) {
       const quizzesId = await this.quizService.insertQuizzes(
