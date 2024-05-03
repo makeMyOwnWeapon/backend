@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsBoolean } from 'class-validator';
+import { IsString, IsInt } from 'class-validator';
 
 export class ReadQuizSetDTO {
   @IsInt()
@@ -34,8 +34,6 @@ export class ReadCertainLectureQuizDTO {
 export class RecommendationDTO {
   @IsInt()
   numOfRecommendation: number;
-  @IsBoolean()
-  isUp: boolean;
   @IsInt()
   quizSetId: number;
 }

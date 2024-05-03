@@ -30,7 +30,6 @@ export class QuizService {
   async updateRecommandation(
     memberId: number,
     quizSetId: number,
-    isUp: boolean,
   ): Promise<number> {
     const existingRecommandation = await this.recommendationRepository.findOne({
       where: {
@@ -39,7 +38,7 @@ export class QuizService {
       },
     });
     console.log('existingRecommandation: ', existingRecommandation);
-    if (isUp && !existingRecommandation) {
+    if (!existingRecommandation) {
       //Up인 경우
       const newRecommendation = this.recommendationRepository.create({
         member: { id: memberId },
@@ -48,7 +47,7 @@ export class QuizService {
       await this.recommendationRepository.save(newRecommendation);
       return 1;
     }
-    if (!isUp && existingRecommandation) {
+    if (existingRecommandation) {
       //down인 경우
       this.recommendationRepository.remove(existingRecommandation);
       return -1;

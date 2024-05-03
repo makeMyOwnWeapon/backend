@@ -65,12 +65,11 @@ export class QuizController {
   ) {
     const memberId = this.extractIdFromToken(authHeader);
     const NumOfRecommendations = recommendationInfo.numOfRecommendation;
-    const isUp = recommendationInfo.isUp;
     const quizSetId = recommendationInfo.quizSetId;
 
     return (
       NumOfRecommendations +
-      (await this.quizService.updateRecommandation(memberId, quizSetId, isUp))
+      (await this.quizService.updateRecommandation(memberId, quizSetId))
     );
   }
 
