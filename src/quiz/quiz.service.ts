@@ -27,6 +27,35 @@ export class QuizService {
     private readonly recommendationRepository: Repository<RecommendationEntity>,
   ) {}
 
+  async updateRecommandation(
+    memberId: number,
+    quizSetId: number,
+    isUp: boolean,
+  ): Promise<number> {
+    const existingRecommandation = await this.recommendationRepository.findOne({
+      where: {
+        member: { id: memberId },
+        quizSet: { id: quizSetId },
+      },
+    });
+    console.log('existingRecommandation: ', existingRecommandation);
+    if (isUp && !existingRecommandation) {
+      //Up인 경우
+      const newRecommendation = this.recommendationRepository.create({
+        member: { id: memberId },
+        quizSet: { id: quizSetId },
+      });
+      await this.recommendationRepository.save(newRecommendation);
+      return 1;
+    }
+    if (!isUp && existingRecommandation) {
+      //down인 경우
+      this.recommendationRepository.remove(existingRecommandation);
+      return -1;
+    }
+    return 0;
+  }
+
   async insertQuizSets(
     title: string,
     subLecture: SubLectureEntity,

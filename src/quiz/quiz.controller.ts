@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
+import { RecommendationDTO } from './dto/quiz_sets.dto';
 import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
 import { JwtService } from '@nestjs/jwt';
@@ -55,6 +56,21 @@ export class QuizController {
       quizsetId,
       isSeeCommentary,
       isSeeAnswer,
+    );
+  }
+  @Post('/recommendation')
+  async updateRecommandation(
+    @Body() recommendationInfo: RecommendationDTO,
+    @Headers('Authorization') authHeader: string,
+  ) {
+    const memberId = this.extractIdFromToken(authHeader);
+    const NumOfRecommendations = recommendationInfo.numOfRecommendation;
+    const isUp = recommendationInfo.isUp;
+    const quizSetId = recommendationInfo.quizSetId;
+
+    return (
+      NumOfRecommendations +
+      (await this.quizService.updateRecommandation(memberId, quizSetId, isUp))
     );
   }
 
