@@ -18,4 +18,24 @@ export class HistoryService {
     @InjectRepository(QuizResultEntity)
     private readonly quizResultEntity: Repository<QuizResultEntity>,
   ) {}
+  async readHistories(memberId: number) {
+    try {
+      // 사용자의 레포트 목록을 조회합니다.
+      const histories = await this.lectureHistoryRepository.find({
+        where: { member: { id: memberId } }, // 사용자 ID에 해당하는 레포트만 가져옵니다.
+        relations: ['subLecture', 'subLecture.mainLecture'], // 관련된 엔티티들을 함께 로드합니다.
+      });
+
+      // 레포트 목록을 반환합니다.
+      return histories.map((history) => ({
+        subLectureId: history.subLecture.id,
+        subLectureTitle: history.subLecture.title,
+        lecturerName: history.subLecture.mainLecture.lecturer_name,
+        registrationDate: history.createdAt,
+      }));
+    } catch (error) {
+      // 에러가 발생한 경우 예외를 던집니다.
+      throw new Error('Failed to retrieve history');
+    }
+  }
 }

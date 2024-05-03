@@ -5,6 +5,10 @@ import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 import { VideoAnalyticsHistoryEntity } from '../entities/video-analytics-history.entity';
 import { GptUsageHistoryEntity } from '../entities/gpt-usage-history';
 import { QuizResultEntity } from '../entities/quiz-result.entity';
+import { HistoryController } from './history.controller';
+import { LectureService } from 'src/lecture/lecture.service';
+import { LectureModule } from '../lecture/lecture.module';
+import { MemberModule } from 'src/member/member.module';
 
 @Module({
   imports: [
@@ -14,7 +18,10 @@ import { QuizResultEntity } from '../entities/quiz-result.entity';
       GptUsageHistoryEntity,
       QuizResultEntity,
     ]),
+    MemberModule,
+    LectureModule,
   ],
-  providers: [HistoryService],
+  providers: [HistoryService, LectureService],
+  controllers: [HistoryController],
 })
 export class HistoryModule {}
