@@ -80,7 +80,6 @@ export class QuizService {
     }
 
     const second = time[0] * 3600 + time[1] * 60 + time[2]; // 시간, 분, 초를 초로 변환
-    console.log(second);
     return second;
   }
 

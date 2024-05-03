@@ -20,7 +20,7 @@ export class QuizController {
     private jwtService: JwtService,
   ) {}
 
-  private extractIdFromToken(authHeader: string): string | null {
+  private extractIdFromToken(authHeader: string): number | null {
     const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
     if (!token) {
       return null;

@@ -5,11 +5,11 @@ import { DefaultEntity } from './default-entity';
 
 @Entity('lecture_histories')
 export class LectureHistoryEntity extends DefaultEntity {
-  @Column({ type: 'date', nullable: false })
-  completionDate: string;
+  @Column('datetime', { nullable: false })
+  startedAt: Date;
 
-  @Column({ nullable: false })
-  totalLearningTime: number;
+  @Column('datetime')
+  endedAt: Date;
 
   @ManyToOne(() => SubLectureEntity, (subLecture) => subLecture.histories)
   @JoinColumn()
