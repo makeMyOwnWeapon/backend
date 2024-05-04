@@ -6,10 +6,8 @@ import { QuizSetEntity } from '../entities/quiz-set.entity';
 import { ChoiceEntity } from '../entities/choice.entity';
 import { RecommendationEntity } from '../entities/recommendation-entity';
 import { QuizController } from './quiz.controller';
-import { LectureService } from 'src/lecture/lecture.service';
 import { LectureModule } from '../lecture/lecture.module';
 import { MemberModule } from 'src/member/member.module';
-import { MemberService } from 'src/member/member.service';
 import { MemberEntity } from 'src/entities/member.entity';
 
 @Module({
@@ -24,7 +22,8 @@ import { MemberEntity } from 'src/entities/member.entity';
     LectureModule,
     MemberModule,
   ],
-  providers: [QuizService, LectureService, MemberService],
+  providers: [QuizService, TypeOrmModule],
   controllers: [QuizController],
+  exports: [QuizService, TypeOrmModule],
 })
 export class QuizModule {}
