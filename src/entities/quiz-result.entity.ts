@@ -17,10 +17,10 @@ export class QuizResultEntity extends DefaultEntity {
 
   @ManyToOne(
     () => LectureHistoryEntity,
-    (lecture_histories) => lecture_histories.quizResults,
+    (lectureHistories) => lectureHistories.quizResults,
   )
   @JoinColumn()
-  lecture_histories: LectureHistoryEntity;
+  lectureHistories: LectureHistoryEntity;
 
   @OneToOne(() => ChoiceEntity)
   @JoinColumn()

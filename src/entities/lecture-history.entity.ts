@@ -23,14 +23,14 @@ export class LectureHistoryEntity extends DefaultEntity {
 
   @OneToMany(
     () => QuizResultEntity,
-    (quizResultEntity) => quizResultEntity.lecture_histories,
+    (quizResultEntity) => quizResultEntity.lectureHistories,
   )
   quizResults: QuizResultEntity[];
 
   @OneToMany(
     () => VideoAnalyticsHistoryEntity,
     (videoAnalyticsHistoryEntity) =>
-      videoAnalyticsHistoryEntity.lecture_histories,
+      videoAnalyticsHistoryEntity.lectureHistories,
   )
   videoAnalyticsHistories: VideoAnalyticsHistoryEntity[];
 }

@@ -19,10 +19,10 @@ export class VideoAnalyticsHistoryEntity extends DefaultEntity {
 
   @ManyToOne(
     () => LectureHistoryEntity,
-    (lecture_histories) => lecture_histories.videoAnalyticsHistories,
+    (lectureHistories) => lectureHistories.videoAnalyticsHistories,
   )
   @JoinColumn()
-  lecture_histories: LectureHistoryEntity;
+  lectureHistories: LectureHistoryEntity;
 
   @Column('datetime', { nullable: false })
   startedAt: Date;
