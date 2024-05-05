@@ -30,3 +30,10 @@ export class ReadCertainLectureQuizDTO {
   @IsString()
   createdAt: Date;
 }
+
+export class RecommendationDTO {
+  @IsInt()
+  numOfRecommendation: number;
+  @IsInt()
+  quizSetId: number;
+}

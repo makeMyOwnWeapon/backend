@@ -6,6 +6,10 @@ import { VideoAnalyticsHistoryEntity } from '../entities/video-analytics-history
 import { GptUsageHistoryEntity } from '../entities/gpt-usage-history';
 import { QuizResultEntity } from '../entities/quiz-result.entity';
 import { HistoryController } from './history.controller';
+import { LectureModule } from '../lecture/lecture.module';
+import { MemberModule } from 'src/member/member.module';
+import { QuizModule } from 'src/quiz/quiz.module';
+// import { QuizEntity } from 'src/entities/quiz.entity';
 
 @Module({
   imports: [
@@ -15,6 +19,9 @@ import { HistoryController } from './history.controller';
       GptUsageHistoryEntity,
       QuizResultEntity,
     ]),
+    QuizModule,
+    MemberModule,
+    LectureModule,
   ],
   providers: [HistoryService],
   controllers: [HistoryController],

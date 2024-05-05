@@ -27,6 +27,43 @@ export class QuizService {
     private readonly recommendationRepository: Repository<RecommendationEntity>,
   ) {}
 
+  async retrieveQuizEntity(subLectureId: number): Promise<QuizEntity[]> {
+    // 문제와 해당 문제에 대한 선택지, 정답 여부, 해설 가져오기
+    const quizzes = await this.quizRepository.find({
+      where: { quizSet: { subLecture: { id: subLectureId } } },
+      relations: ['choices', 'quizResults'],
+    });
+    return quizzes;
+  }
+
+  async updateRecommandation(
+    memberId: number,
+    quizSetId: number,
+  ): Promise<number> {
+    const existingRecommandation = await this.recommendationRepository.findOne({
+      where: {
+        member: { id: memberId },
+        quizSet: { id: quizSetId },
+      },
+    });
+    console.log('existingRecommandation: ', existingRecommandation);
+    if (!existingRecommandation) {
+      //Up인 경우
+      const newRecommendation = this.recommendationRepository.create({
+        member: { id: memberId },
+        quizSet: { id: quizSetId },
+      });
+      await this.recommendationRepository.save(newRecommendation);
+      return 1;
+    }
+    if (existingRecommandation) {
+      //down인 경우
+      this.recommendationRepository.remove(existingRecommandation);
+      return -1;
+    }
+    return 0;
+  }
+
   async insertQuizSets(
     title: string,
     subLecture: SubLectureEntity,

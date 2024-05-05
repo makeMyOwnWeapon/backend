@@ -24,5 +24,6 @@ import { MemberEntity } from 'src/entities/member.entity';
   ],
   providers: [QuizService],
   controllers: [QuizController],
+  exports: [QuizService],
 })
 export class QuizModule {}
