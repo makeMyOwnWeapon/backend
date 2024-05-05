@@ -9,7 +9,6 @@ import { HistoryController } from './history.controller';
 import { LectureModule } from '../lecture/lecture.module';
 import { MemberModule } from 'src/member/member.module';
 import { QuizModule } from 'src/quiz/quiz.module';
-// import { QuizEntity } from 'src/entities/quiz.entity';
 
 @Module({
   imports: [

@@ -4,7 +4,7 @@ import { MemberService } from '../member/member.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import { Public } from 'src/auth/auth.guard';
+import { Public } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {

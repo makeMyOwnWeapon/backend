@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MainLectureEntity } from '../entities/main-lecture.entity';
 import { SubLectureEntity } from '../entities/sub-lecture.entity';
 import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
+import { LectureController } from './lecture.controller';
+import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 
 @Module({
   imports: [
@@ -11,9 +13,11 @@ import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
       MainLectureEntity,
       SubLectureEntity,
       LectureImageUrlEntity,
+      LectureHistoryEntity,
     ]),
   ],
   providers: [LectureService],
   exports: [LectureService],
+  controllers: [LectureController],
 })
 export class LectureModule {}
