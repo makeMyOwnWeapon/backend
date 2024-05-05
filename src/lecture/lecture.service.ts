@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MainLectureEntity } from '../entities/main-lecture.entity';
 import { Repository } from 'typeorm';
@@ -7,6 +7,8 @@ import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
 import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
 import { LectureHistoryInitRequestDto } from './dto/LectureHistoryInitRequest.dto';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
+import { MemberEntity } from 'src/entities/member.entity';
+import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
 
 @Injectable()
 export class LectureService {
@@ -90,10 +92,41 @@ export class LectureService {
     return newSubLecture.id;
   }
 
-  async initializeLectureHistory(dto: LectureHistoryInitRequestDto, memberId: number): Promise<LectureHistoryResponseDto> {
-    // this.lectureHistoryEntity.create({
-    //
-    // })
-    return undefined;
+  async initializeLectureHistory(
+    dto: LectureHistoryInitRequestDto,
+    member: Promise<MemberEntity>,
+  ): Promise<LectureHistoryResponseDto> {
+    const { subLectureUrl, startedAt } = dto;
+    const subLecture = await this.subLectureRepository.findOne({
+      where: { url: subLectureUrl },
+    });
+    const lectureHistory = this.lectureHistoryRepository.create({
+      subLecture: { id: subLecture.id },
+      startedAt,
+      member: await member,
+    });
+    return {
+      lectureHistoryId: (
+        await this.lectureHistoryRepository.save(lectureHistory)
+      ).id,
+    };
+  }
+
+  async finalizeLectureHistory(
+    lectureHistoryId: number,
+    dto: LectureHistorySaveRequestDto,
+  ): Promise<LectureHistoryResponseDto> {
+    const lectureHistory = await this.lectureHistoryRepository.findOne({
+      where: { id: lectureHistoryId },
+    });
+    if (!lectureHistory) {
+      throw new NotFoundException('수강기록이 존재하지 않음');
+    }
+    lectureHistory.endedAt = dto.endedAt;
+    return {
+      lectureHistoryId: (
+        await this.lectureHistoryRepository.save(lectureHistory)
+      ).id,
+    };
   }
 }

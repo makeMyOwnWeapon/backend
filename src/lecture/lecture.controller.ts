@@ -1,31 +1,35 @@
 import { Body, Controller, Param, Patch, Post, Req } from '@nestjs/common';
-import { LectureService } from './lecture.service';
-import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
+import { UserRequest } from '../auth/UserRequest';
 import { LectureHistoryInitRequestDto } from './dto/LectureHistoryInitRequest.dto';
+import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
 import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
+import { LectureService } from './lecture.service';
+import { MemberService } from 'src/member/member.service';
 
 @Controller('lecture')
 export class LectureController {
-  constructor(private lectureService: LectureService) {}
+  constructor(
+    private lectureService: LectureService,
+    private memberService: MemberService,
+  ) {}
 
   @Post('/sub-lecture/history')
   initHistory(
-    @Req() req: Request,
+    @Req() req: UserRequest,
     @Body() dto: LectureHistoryInitRequestDto,
-  ): LectureHistoryResponseDto {
-    const memberId = 1;
-    // return this.lectureService.initializeLectureHistory(dto, memberId);
-    return { lectureHistoryId: memberId };
+  ): Promise<LectureHistoryResponseDto> {
+    const memberId = req.user.id;
+    return this.lectureService.initializeLectureHistory(
+      dto,
+      this.memberService.retrieveMemberEntity(memberId),
+    );
   }
-
 
   @Patch('/sub-lecture/history/:lectureHistoryId')
   saveHistory(
-    @Param() lectureHistoryId: number,
+    @Param('lectureHistoryId') lectureHistoryId: number,
     @Body() dto: LectureHistorySaveRequestDto,
-  ): LectureHistoryResponseDto {
-    console.log(dto);
-    return { lectureHistoryId: 1 };
-    // return this.lectureService.initializeLectureHistory(dto);
+  ): Promise<LectureHistoryResponseDto> {
+    return this.lectureService.finalizeLectureHistory(lectureHistoryId, dto);
   }
 }
