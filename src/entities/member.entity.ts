@@ -12,8 +12,8 @@ export class MemberEntity extends DefaultEntity {
   @Column()
   oauthId: string;
 
-  @Column({ nullable: false })
-  authorizationCode: number;
+  @Column('int', { nullable: false })
+  authorizationCode: AuthorizationCode;
 
   @Column({ nullable: false, length: 100 })
   nickname: string;
@@ -47,4 +47,9 @@ export class MemberEntity extends DefaultEntity {
 
   @OneToMany(() => QuizResultEntity, (quizResults) => quizResults.member)
   quizResults: QuizResultEntity[];
+}
+
+export enum AuthorizationCode {
+  STUDENT,
+  TEACHER,
 }

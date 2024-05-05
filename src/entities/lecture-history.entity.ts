@@ -10,7 +10,7 @@ export class LectureHistoryEntity extends DefaultEntity {
   @Column('datetime', { nullable: false })
   startedAt: Date;
 
-  @Column('datetime')
+  @Column('datetime', { nullable: true })
   endedAt: Date;
 
   @ManyToOne(() => SubLectureEntity, (subLecture) => subLecture.histories)
