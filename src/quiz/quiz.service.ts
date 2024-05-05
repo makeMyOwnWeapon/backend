@@ -46,7 +46,6 @@ export class QuizService {
         quizSet: { id: quizSetId },
       },
     });
-    console.log('existingRecommandation: ', existingRecommandation);
     if (!existingRecommandation) {
       //Up인 경우
       const newRecommendation = this.recommendationRepository.create({

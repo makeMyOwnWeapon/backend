@@ -76,6 +76,7 @@ export class MemberController {
     return { token, expire: decodedToken.exp - decodedToken.iat };
   }
 
+  @Public()
   @Get('/signin')
   async getMember(@Headers('Authorization') authHeader: string) {
     const oauthId = this.extractSubFromToken(authHeader);

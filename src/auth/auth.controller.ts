@@ -4,6 +4,7 @@ import { MemberService } from '../member/member.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { Public } from 'src/auth/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -13,8 +14,12 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
 
+  @Public()
   @Get('extension')
-  async authForExtension(@Headers('Authorization') authHeader: string, @Res() res: Response): Promise<ExtensionAuthResponseDto | Response<void>> {
+  async authForExtension(
+    @Headers('Authorization') authHeader: string,
+    @Res() res: Response,
+  ): Promise<ExtensionAuthResponseDto | Response<void>> {
     if (!authHeader) {
       return res.status(HttpStatus.BAD_REQUEST).send();
     }
