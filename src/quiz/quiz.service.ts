@@ -27,6 +27,15 @@ export class QuizService {
     private readonly recommendationRepository: Repository<RecommendationEntity>,
   ) {}
 
+  async retrieveQuizEntity(subLectureId: number): Promise<QuizEntity[]> {
+    // 문제와 해당 문제에 대한 선택지, 정답 여부, 해설 가져오기
+    const quizzes = await this.quizRepository.find({
+      where: { quizSet: { subLecture: { id: subLectureId } } },
+      relations: ['choices', 'quizResults'],
+    });
+    return quizzes;
+  }
+
   async updateRecommandation(
     memberId: number,
     quizSetId: number,

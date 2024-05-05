@@ -10,6 +10,7 @@ import { MemberEntity } from '../entities/member.entity';
 import { MemberService } from './member.service';
 import { JwtService } from '@nestjs/jwt';
 import { FetchOAuthIdResponseDto } from './dto/fetchOAuthIdResponse.dto';
+import { Public } from 'src/auth/auth.guard';
 
 @Controller('member')
 export class MemberController {
@@ -54,6 +55,7 @@ export class MemberController {
     return this.memberService.deleteMember(memberId);
   }
 
+  @Public()
   @Post('/signup')
   async createMember(
     @Body() memberEntity: MemberEntity,
