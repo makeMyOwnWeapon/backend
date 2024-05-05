@@ -30,6 +30,7 @@ export class HistoryService {
       return histories.map((history) => ({
         subLectureId: history.subLecture.id,
         subLectureTitle: history.subLecture.title,
+        subLectureUrl: history.subLecture.url,
         lecturerName: history.subLecture.mainLecture.lecturer_name,
         registrationDate: history.createdAt,
       }));
