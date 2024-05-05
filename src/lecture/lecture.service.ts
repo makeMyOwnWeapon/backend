@@ -4,6 +4,9 @@ import { MainLectureEntity } from '../entities/main-lecture.entity';
 import { Repository } from 'typeorm';
 import { SubLectureEntity } from '../entities/sub-lecture.entity';
 import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
+import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
+import { LectureHistoryInitRequestDto } from './dto/LectureHistoryInitRequest.dto';
+import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 
 @Injectable()
 export class LectureService {
@@ -14,6 +17,8 @@ export class LectureService {
     private readonly subLectureRepository: Repository<SubLectureEntity>,
     @InjectRepository(LectureImageUrlEntity)
     private readonly lectureImageUrlRepository: Repository<LectureImageUrlEntity>,
+    @InjectRepository(LectureHistoryEntity)
+    private readonly lectureHistoryRepository: Repository<LectureHistoryEntity>,
   ) {}
 
   async retrieveSubLectureEntity(
@@ -83,5 +88,12 @@ export class LectureService {
 
     // 저장한 SubLectureEntity의 id를 반환.
     return newSubLecture.id;
+  }
+
+  async initializeLectureHistory(dto: LectureHistoryInitRequestDto, memberId: number): Promise<LectureHistoryResponseDto> {
+    // this.lectureHistoryEntity.create({
+    //
+    // })
+    return undefined;
   }
 }
