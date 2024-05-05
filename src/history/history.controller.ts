@@ -34,7 +34,6 @@ export class HistoryController {
     const memberId = this.extractIdFromToken(authHeader);
     if (subLectureId) {
       const quizzes = await this.quizService.retrieveQuizEntity(subLectureId);
-      console.log('quizzes: ', quizzes);
       return await this.historyService.readHistoryReport(
         subLectureId,
         memberId,

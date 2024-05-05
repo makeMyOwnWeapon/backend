@@ -11,7 +11,8 @@ import { QuizModule } from './quiz/quiz.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AnalyticsModule } from './analytics/analytics.module';
-
+import { APP_GUARD } from '@nestjs/core';
+import { MemberAuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [
@@ -37,7 +38,12 @@ import { AnalyticsModule } from './analytics/analytics.module';
     AnalyticsModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: MemberAuthGuard,
+    },
+  ],
 })
 export class AppModule {
   constructor(private datasource: DataSource) {}
