@@ -5,12 +5,14 @@ import {
   Post,
   Headers,
   BadRequestException,
+  Req,
 } from '@nestjs/common';
 import { MemberEntity } from '../entities/member.entity';
 import { MemberService } from './member.service';
 import { JwtService } from '@nestjs/jwt';
 import { FetchOAuthIdResponseDto } from './dto/fetchOAuthIdResponse.dto';
 import { Public } from 'src/auth/auth.guard';
+import { UserRequest } from '../auth/UserRequest';
 
 @Controller('member')
 export class MemberController {
@@ -32,32 +34,20 @@ export class MemberController {
     }
   }
 
-  private extractIdFromToken(authHeader: string): string | null {
-    const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
-    if (!token) {
-      return null;
-    }
-    try {
-      const memberId = this.jwtService.decode(token).id;
-      return memberId;
-    } catch (error) {
-      return null;
-    }
-  }
-
   private extractToken(authHeader: string): string | null {
     return authHeader?.split(' ')[1];
   }
 
   @Post('/delete')
-  async deleteMember(@Headers('Authorization') authHeader: string) {
-    const memberId = this.extractIdFromToken(authHeader);
+  async deleteMember(@Req() req: UserRequest) {
+    const memberId = req.user.id;
     return this.memberService.deleteMember(memberId);
   }
 
   @Public()
   @Post('/signup')
   async createMember(
+    @Req() req: UserRequest,
     @Body() memberEntity: MemberEntity,
     @Headers('Authorization') authHeader: string,
   ) {

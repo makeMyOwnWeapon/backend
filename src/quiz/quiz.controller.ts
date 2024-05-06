@@ -1,18 +1,11 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Headers,
-  Get,
-  Param,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Query, Req } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
 import { RecommendationDTO } from './dto/quiz_sets.dto';
 import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
 import { JwtService } from '@nestjs/jwt';
+import { UserRequest } from '../auth/UserRequest';
 
 @Controller('quizsets')
 export class QuizController {
@@ -22,19 +15,6 @@ export class QuizController {
     private memberService: MemberService,
     private jwtService: JwtService,
   ) {}
-
-  private extractIdFromToken(authHeader: string): number | null {
-    const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
-    if (!token) {
-      return null;
-    }
-    try {
-      const memberId = this.jwtService.decode(token).id;
-      return memberId;
-    } catch (error) {
-      return null;
-    }
-  }
 
   @Get('/')
   async readQuiz(@Query('subLectureUrl') subLectureUrlEncoded: string) {
@@ -60,10 +40,10 @@ export class QuizController {
   }
   @Post('/recommendation')
   async updateRecommandation(
+    @Req() req: UserRequest,
     @Body() recommendationInfo: RecommendationDTO,
-    @Headers('Authorization') authHeader: string,
   ) {
-    const memberId = this.extractIdFromToken(authHeader);
+    const memberId = req.user.id;
     const NumOfRecommendations = recommendationInfo.numOfRecommendation;
     const quizSetId = recommendationInfo.quizSetId;
 
@@ -75,8 +55,8 @@ export class QuizController {
 
   @Post('')
   async createQuiz(
+    @Req() req: UserRequest,
     @Body() quizInfo: CreateQuizSetDTO,
-    @Headers('Authorization') authHeader: string,
   ) {
     const mainLectureId = await this.lectureService.insertMainLectures(
       quizInfo.mainLectureTitle,
@@ -88,7 +68,7 @@ export class QuizController {
       quizInfo.duration,
       mainLectureId,
     );
-    const memberId = this.extractIdFromToken(authHeader);
+    const memberId = req.user.id;
     const subLecture =
       await this.lectureService.retrieveSubLectureEntity(subLectureId);
     const member = await this.memberService.retrieveMemberEntity(memberId);

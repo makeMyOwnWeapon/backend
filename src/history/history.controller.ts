@@ -1,9 +1,10 @@
-import { Controller, Get, Headers, Query } from '@nestjs/common';
+import { Controller, Get, Query, Req } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { HistoryService } from './history.service';
 import { QuizService } from 'src/quiz/quiz.service';
 import { ReadHistoriesDTO } from './dto/readHistories.dto';
 import { ReadHistoryReportDTO } from './dto/readHistoryReport.dto';
+import { UserRequest } from '../auth/UserRequest';
 
 @Controller('history')
 export class HistoryController {
@@ -12,26 +13,12 @@ export class HistoryController {
     private historyService: HistoryService,
     private quizService: QuizService,
   ) {}
-
-  private extractIdFromToken(authHeader: string): number | null {
-    const token = authHeader?.split(' ')[1]; // Bearer 토큰 추출
-    if (!token) {
-      return null;
-    }
-    try {
-      const memberId = this.jwtService.decode(token).id;
-      return memberId;
-    } catch (error) {
-      return null;
-    }
-  }
-
   @Get('/')
   async readHistories(
-    @Headers('Authorization') authHeader: string,
+    @Req() req: UserRequest,
     @Query('subLectureId') subLectureId: number,
   ): Promise<ReadHistoryReportDTO | ReadHistoriesDTO[]> {
-    const memberId = this.extractIdFromToken(authHeader);
+    const memberId = req.user.id;
     if (subLectureId) {
       const quizzes = await this.quizService.retrieveQuizEntity(subLectureId);
       return await this.historyService.readHistoryReport(
