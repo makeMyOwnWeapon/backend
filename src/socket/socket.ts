@@ -40,6 +40,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     
     this.server.to(socketId).emit('wakeup','hello');}
 
-  }
+  
+
+ 
+
   
 }
