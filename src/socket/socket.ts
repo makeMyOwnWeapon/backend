@@ -27,10 +27,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
    const MemberID = this.jwtService.decode(data.token).id;
    this.hashTable.set(MemberID, data.socketId);
 
+
    
   }
 
   wakeup(message:any){
+
     if(!this.hashTable.has(message)){
       throw new Error('에러발생');
     }
@@ -39,8 +41,5 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(socketId).emit('wakeup','hello');}
 
   }
-
- 
-
   
 }
