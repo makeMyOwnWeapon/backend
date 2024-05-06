@@ -26,24 +26,20 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   Hashing(client:Socket, data:any){
    const MemberID = this.jwtService.decode(data.token).id;
    this.hashTable.set(MemberID, data.socketId);
-   console.log(this.hashTable);
+
 
    
   }
 
   wakeup(message:any){
-    console.log('hash: ',this.hashTable);
-    console.log('id: ', message);
-    const socketId = this.hashTable.get(message)
-    console.log('socketid: ',socketId);
-    this.server.to(socketId).emit('wakeup','hello');
-    console.log('done');
-  }
 
- 
-  listAllClients() {
-      const clients = Array.from(this.server.of('/').sockets.keys());
-      console.log('Connected clients:', clients);
+    if(!this.hashTable.has(message)){
+      throw new Error('에러발생');
+    }
+    const socketId = this.hashTable.get(message)
+    
+    this.server.to(socketId).emit('wakeup','hello');}
+
   }
   
 }

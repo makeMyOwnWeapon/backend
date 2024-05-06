@@ -96,6 +96,7 @@ export class AnalyticsController {
         await this.memberService.retrieveMemberEntity(memberId);
 
       // 익스텐션에서 알람 울리는 로직
+
       this.appGateway.wakeup(memberId);
 
       return res.status(HttpStatus.OK).json({
@@ -104,7 +105,8 @@ export class AnalyticsController {
       });
     } catch (error) {
       console.error(error);
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return res.status(HttpStatus.BAD_REQUEST).json({
+
         message: '알람 울림을 실패했습니다.',
       });
 
