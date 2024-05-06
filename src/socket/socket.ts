@@ -32,8 +32,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   wakeup(message:any){
-    console.log(message);
-    this.server.to(message).emit('wakeup','hello');
+    console.log('hash: ',this.hashTable);
+    console.log('id: ', message);
+    const socketId = this.hashTable.get(message)
+    console.log('socketid: ',socketId);
+    this.server.to(socketId).emit('wakeup','hello');
+    console.log('done');
   }
 
  
