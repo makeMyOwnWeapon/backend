@@ -13,7 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AnalyticsSaveRequestDto } from './dto/AnalyticsSaveRequest.dto';
 import { AnalyticsAlarmRequestDto } from './dto/AnalyticsAlarmRequest.dto';
 import { MemberService } from '../member/member.service';
-import { LectureService } from '../lecture/lecture.service';
+import { HistoryService } from 'src/history/history.service';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { UserRequest } from '../auth/UserRequest';
 import { Response } from 'express';
@@ -25,8 +25,8 @@ export class AnalyticsController {
   constructor(
     private jwtService: JwtService,
     private memberService: MemberService,
-    private lectureService: LectureService,
     private analyticsService: AnalyticsService,
+    private historyService: HistoryService,
   ) {}
 
   @Get()
@@ -41,42 +41,36 @@ export class AnalyticsController {
   /**
    * 저장용
    * */
-  @Post('/save')
-  async handleAnalyticsSave(
-    @Req() req: UserRequest,
-    @Body() analyticsSaveRequestDto: AnalyticsSaveRequestDto,
-    @Res() res: Response,
-  ) {
-    try {
-      const memberId = req.user.id;
-      const memberEntity =
-        await this.memberService.retrieveMemberEntity(memberId);
-      const sub_lecture_entity =
-        await this.lectureService.retrieveSubLectureEntity(
-          Number(analyticsSaveRequestDto.sublectureId),
-        );
-      const videoAnalyticsHistoryEntity = analyticsSaveRequestDto.toEntity(
-        sub_lecture_entity,
-        memberEntity,
-      );
-      await this.analyticsService.saveVideoAnalyticsHistory(
-        videoAnalyticsHistoryEntity,
-      );
+  // @Post('/save')
+  // async handleAnalyticsSave(
+  //   @Req() req: UserRequest,
+  //   @Body() analyticsSaveRequestDto: AnalyticsSaveRequestDto,
+  //   @Res() res: Response,
+  // ) {
+  //   try {
+  //     //const memberId = req.user.id;
+  //     //TODO: 소켓에서 유저아이디가 듣고있는 수강기록 아이디를 받아온다
+  //     const lectureHistoryEntity =
+  //       await this.historyService.retrieveLectureHistoryEntity(lectureHistoryId);
+  //     const videoAnalyticsHistoryEntity =
+  //       analyticsSaveRequestDto.toEntity(lectureHistoryEntity);
+  //     await this.analyticsService.saveVideoAnalyticsHistory(
+  //       videoAnalyticsHistoryEntity,
+  //     );
 
-      return res.status(HttpStatus.OK).json({
-        message: '데이터가 성공적으로 처리되었습니다.',
-        data: analyticsSaveRequestDto,
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: '데이터 처리 중 오류가 발생했습니다.',
-      });
+  //     return res.status(HttpStatus.OK).json({
+  //       message: '데이터가 성공적으로 처리되었습니다.',
+  //       data: analyticsSaveRequestDto,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+  //       message: '데이터 처리 중 오류가 발생했습니다.',
+  //     });
 
-      return res;
-    }
-  }
-
+  //     return res;
+  //   }
+  // }
 
   /**
    * 알람용

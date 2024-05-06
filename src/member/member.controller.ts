@@ -36,7 +36,6 @@ export class MemberController {
     }
     try {
       const sub = this.jwtService.decode(token).sub;
-      console.log(typeof sub);
       return sub;
     } catch (error) {
       return null;
@@ -86,7 +85,6 @@ export class MemberController {
     if (!member) {
       return null;
     }
-    console.log('member: ', member);
     // JWT 토큰 생성
     const token = this.jwtService.sign(member);
     const decodedToken = this.jwtService.decode(token);
