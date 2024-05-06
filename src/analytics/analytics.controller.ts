@@ -10,7 +10,8 @@ import {
   Req,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AnalyticsOccurRequestDto } from './dto/AnalyticsOccurRequest.dto';
+import { AnalyticsSaveRequestDto } from './dto/AnalyticsSaveRequest.dto';
+import { AnalyticsAlarmRequestDto } from './dto/AnalyticsAlarmRequest.dto';
 import { MemberService } from '../member/member.service';
 import { LectureService } from '../lecture/lecture.service';
 import { AnalyticsService } from '../analytics/analytics.service';
@@ -35,10 +36,13 @@ export class AnalyticsController {
     return 'OK';
   }
 
-  @Post('/occur')
-  async handleAnalyticsOccur(
+  /**
+   * 저장용
+   * */
+  @Post('/save')
+  async handleAnalyticsSave(
     @Req() req: UserRequest,
-    @Body() analyticsOccurRequestDto: AnalyticsOccurRequestDto,
+    @Body() analyticsSaveRequestDto: AnalyticsSaveRequestDto,
     @Res() res: Response,
   ) {
     try {
@@ -47,9 +51,9 @@ export class AnalyticsController {
         await this.memberService.retrieveMemberEntity(memberId);
       const sub_lecture_entity =
         await this.lectureService.retrieveSubLectureEntity(
-          Number(analyticsOccurRequestDto.sublectureId),
+          Number(analyticsSaveRequestDto.sublectureId),
         );
-      const videoAnalyticsHistoryEntity = analyticsOccurRequestDto.toEntity(
+      const videoAnalyticsHistoryEntity = analyticsSaveRequestDto.toEntity(
         sub_lecture_entity,
         memberEntity,
       );
@@ -59,12 +63,43 @@ export class AnalyticsController {
 
       return res.status(HttpStatus.OK).json({
         message: '데이터가 성공적으로 처리되었습니다.',
-        data: analyticsOccurRequestDto,
+        data: analyticsSaveRequestDto,
       });
     } catch (error) {
       console.error(error);
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: '데이터 처리 중 오류가 발생했습니다.',
+      });
+
+      return res;
+    }
+  }
+
+
+  /**
+   * 알람용
+   * */
+  @Post('/alarm')
+  async handleAnalyticsOccur(
+    @Req() req: UserRequest,
+    @Body() analyticsAlarmRequestDto: AnalyticsAlarmRequestDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const memberId = req.user.id;
+      const memberEntity =
+        await this.memberService.retrieveMemberEntity(memberId);
+
+      // 익스텐션에서 알람 울리는 로직
+
+      return res.status(HttpStatus.OK).json({
+        message: '성공적으로 알람을 울렸습니다.',
+        data: analyticsAlarmRequestDto,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: '알람 울림을 실패했습니다.',
       });
 
       return res;
