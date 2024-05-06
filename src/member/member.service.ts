@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MemberEntity } from '../entities/member.entity';
-import { SigninDto } from './dto/member.dto';
+import { userInfoDto, Signup2Dto } from './dto/member.dto';
 import { FetchOAuthIdResponseDto } from './dto/fetchOAuthIdResponse.dto';
 
 @Injectable()
@@ -28,8 +28,8 @@ export class MemberService {
     return 1;
   }
 
-  async signup(memberEntity: MemberEntity): Promise<SigninDto> {
-    const result = await this.memberRepository.save(memberEntity);
+  async signup(userInfo: Signup2Dto): Promise<userInfoDto> {
+    const result = await this.memberRepository.save(userInfo);
     if (!result) {
       return null;
     }
@@ -37,7 +37,7 @@ export class MemberService {
     return { id, authorizationCode, nickname };
   }
 
-  async signin(oauthId: string): Promise<SigninDto> {
+  async signin(oauthId: string): Promise<userInfoDto> {
     const result = await this.memberRepository.findOne({
       where: { oauthId },
     });

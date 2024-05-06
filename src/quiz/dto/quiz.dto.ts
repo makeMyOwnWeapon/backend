@@ -6,49 +6,63 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ChoiceDTO {
+  @ApiProperty({ description: '선택지 내용' })
   @IsString()
   content: string;
 
+  @ApiProperty({ description: '이 선택지가 답인지 아닌지' })
   @IsBoolean()
   isAnswer: boolean;
 }
 
 export class QuizDTO {
+  @ApiProperty({ description: '문제 설명' })
   @IsString()
   instruction: string;
 
+  @ApiProperty({ description: '문제 해설' })
   @IsString()
   commentary: string;
 
+  @ApiProperty({ description: '문제 팝업시간' })
   @IsString()
   popupTime: string; // 초 단위 정수
 
+  @ApiProperty({ description: '선택지' })
   @ValidateNested()
   @Type(() => ChoiceDTO)
   choices: ChoiceDTO[];
 }
 
 export class CreateQuizSetDTO {
+  @ApiProperty({ description: '문제집 제목' })
   @IsString()
   title: string;
 
+  @ApiProperty({ description: '소강의URL' })
   @IsString()
   subLectureUrl: string;
 
+  @ApiProperty({ description: '소강의 제목' })
   @IsString()
   subLectureTitle: string;
 
+  @ApiProperty({ description: '대강의 제목' })
   @IsString()
   mainLectureTitle: string;
 
+  @ApiProperty({ description: '강사 이름' })
   @IsString()
   lecturerName: string;
 
+  @ApiProperty({ description: '영상 길이' })
   @IsInt()
   duration: number;
 
+  @ApiProperty({ description: '문제 정보' })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => QuizDTO)
