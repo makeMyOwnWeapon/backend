@@ -18,15 +18,18 @@ import { AnalyticsService } from '../analytics/analytics.service';
 import { UserRequest } from '../auth/UserRequest';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
+import { AppGateway } from 'src/socket/socket';
 
 @ApiTags('analytics')
 @Controller('analytics')
 export class AnalyticsController {
+  
   constructor(
     private jwtService: JwtService,
     private memberService: MemberService,
     private lectureService: LectureService,
     private analyticsService: AnalyticsService,
+    private appGateway: AppGateway
   ) {}
 
   @Get()
@@ -93,6 +96,8 @@ export class AnalyticsController {
         await this.memberService.retrieveMemberEntity(memberId);
 
       // 익스텐션에서 알람 울리는 로직
+      console.log(analyticsAlarmRequestDto);
+      this.appGateway.wakeup(memberId);
 
       return res.status(HttpStatus.OK).json({
         message: '성공적으로 알람을 울렸습니다.',
@@ -100,7 +105,7 @@ export class AnalyticsController {
       });
     } catch (error) {
       console.error(error);
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      return res.status(HttpStatus.BAD_REQUEST).json({
         message: '알람 울림을 실패했습니다.',
       });
 
