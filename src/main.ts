@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 dotenv.config({
   path: path.resolve(
@@ -22,6 +23,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   const sqlLogger = new Logger('SQL');
   app.useLogger(sqlLogger);
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   await app.listen(3000);
 }

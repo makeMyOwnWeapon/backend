@@ -13,6 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { APP_GUARD } from '@nestjs/core';
 import { MemberAuthGuard } from 'src/auth/auth.guard';
+import { AppGateway } from './socket/socket';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { MemberAuthGuard } from 'src/auth/auth.guard';
       provide: APP_GUARD,
       useClass: MemberAuthGuard,
     },
+    AppGateway
   ],
 })
 export class AppModule {
