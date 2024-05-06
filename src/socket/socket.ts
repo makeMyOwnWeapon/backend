@@ -1,9 +1,17 @@
 // src/gateway/app.gateway.ts
 import { WebSocketGateway, SubscribeMessage, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+import { JwtService } from '@nestjs/jwt';
+
 
 @WebSocketGateway(4000, { cors: 'localhost:3000', })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
+
+  constructor(
+    private jwtService: JwtService,
+  ) {}
+  private hashTable = new Map();
+
   @WebSocketServer() server: Server;
 
   handleConnection(client: any, ...args: any[]) {
@@ -14,10 +22,24 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('Client disconnected:', client.id);
   }
 
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: string): void {
-    console.log('Message received:', payload);
-    this.server.emit('message', payload + 4000);  // Echo the message back to clients
+  @SubscribeMessage('sendData')
+  Hashing(client:Socket, data:any){
+   const MemberID = this.jwtService.decode(data.token).id;
+   this.hashTable.set(MemberID, data.socketId);
+   console.log(this.hashTable);
 
+   
   }
+
+  wakeup(message:any){
+    console.log(message);
+    this.server.to(message).emit('wakeup','hello');
+  }
+
+ 
+  listAllClients() {
+      const clients = Array.from(this.server.of('/').sockets.keys());
+      console.log('Connected clients:', clients);
+  }
+  
 }
