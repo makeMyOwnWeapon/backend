@@ -1,4 +1,5 @@
 import { IsString, IsInt, IsBoolean } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SleepinessAndDistractionDTO {
   @IsString()
@@ -33,10 +34,14 @@ export class QuizDTO {
 }
 
 export class ReadHistoryReportDTO {
+  @ApiProperty({ description: '졸음/자리이탈 분석시간' })
   sleepinessAndDistraction: SleepinessAndDistractionDTO[];
+  @ApiProperty({ description: '문제 정보' })
   quizzes: QuizDTO[];
+  @ApiProperty({ description: '분석 시작 시각', default: 0 })
   @IsString()
   studyStartTime: Date;
+  @ApiProperty({ description: '분석 종료 시각', default: 0 })
   @IsString()
   studyEndTime: Date;
 }

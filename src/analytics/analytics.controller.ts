@@ -16,7 +16,9 @@ import { LectureService } from '../lecture/lecture.service';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { UserRequest } from '../auth/UserRequest';
 import { Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('analytics')
 @Controller('analytics')
 export class AnalyticsController {
   constructor(

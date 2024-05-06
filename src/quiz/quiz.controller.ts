@@ -6,7 +6,9 @@ import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserRequest } from '../auth/UserRequest';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('quizsets')
 @Controller('quizsets')
 export class QuizController {
   constructor(
@@ -17,6 +19,10 @@ export class QuizController {
   ) {}
 
   @Get('/')
+  @ApiOperation({
+    summary: '특정강의의 문제집 조회',
+    description: '특정강의의 문제집 조회',
+  })
   async readQuiz(@Query('subLectureUrl') subLectureUrlEncoded: string) {
     if (subLectureUrlEncoded) {
       const subLectureUrl = decodeURIComponent(subLectureUrlEncoded);
@@ -27,6 +33,10 @@ export class QuizController {
   }
 
   @Get('/:quizsetId/quizzes')
+  @ApiOperation({
+    summary: '문제집의 문제조회',
+    description: '문제집의 문제조회',
+  })
   async getQuizDetails(
     @Param('quizsetId') quizsetId: number,
     @Query('commentary') isSeeCommentary: boolean,
@@ -39,6 +49,10 @@ export class QuizController {
     );
   }
   @Post('/recommendation')
+  @ApiOperation({
+    summary: '추천수 반영',
+    description: '추천수 반영',
+  })
   async updateRecommandation(
     @Req() req: UserRequest,
     @Body() recommendationInfo: RecommendationDTO,
@@ -54,6 +68,10 @@ export class QuizController {
   }
 
   @Post('')
+  @ApiOperation({
+    summary: '문제집 등록',
+    description: '문제집 등록',
+  })
   async createQuiz(
     @Req() req: UserRequest,
     @Body() quizInfo: CreateQuizSetDTO,

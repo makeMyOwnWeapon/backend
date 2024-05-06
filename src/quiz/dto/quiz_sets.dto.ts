@@ -1,4 +1,5 @@
 import { IsString, IsInt } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ReadQuizSetDTO {
   @IsInt()
@@ -32,8 +33,10 @@ export class ReadCertainLectureQuizDTO {
 }
 
 export class RecommendationDTO {
+  @ApiProperty({ description: '현재 추천수' })
   @IsInt()
   numOfRecommendation: number;
+  @ApiProperty({ description: 'quizSetId' })
   @IsInt()
   quizSetId: number;
 }

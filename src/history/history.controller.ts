@@ -5,7 +5,9 @@ import { QuizService } from 'src/quiz/quiz.service';
 import { ReadHistoriesDTO } from './dto/readHistories.dto';
 import { ReadHistoryReportDTO } from './dto/readHistoryReport.dto';
 import { UserRequest } from '../auth/UserRequest';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('histories')
 @Controller('history')
 export class HistoryController {
   constructor(
@@ -14,6 +16,10 @@ export class HistoryController {
     private quizService: QuizService,
   ) {}
   @Get('/')
+  @ApiOperation({
+    summary: '회원레포트 목록/상세 조회',
+    description: '회원레포트 목록/상세 조회',
+  })
   async readHistories(
     @Req() req: UserRequest,
     @Query('subLectureId') subLectureId: number,

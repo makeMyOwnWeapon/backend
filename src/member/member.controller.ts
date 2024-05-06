@@ -7,13 +7,21 @@ import {
   BadRequestException,
   Req,
 } from '@nestjs/common';
-import { MemberEntity } from '../entities/member.entity';
 import { MemberService } from './member.service';
 import { JwtService } from '@nestjs/jwt';
 import { FetchOAuthIdResponseDto } from './dto/fetchOAuthIdResponse.dto';
 import { Public } from 'src/auth/auth.guard';
 import { UserRequest } from '../auth/UserRequest';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { SignupDto, Signup2Dto } from './dto/member.dto';
 
+@ApiTags('members')
 @Controller('member')
 export class MemberController {
   constructor(
@@ -28,6 +36,7 @@ export class MemberController {
     }
     try {
       const sub = this.jwtService.decode(token).sub;
+      console.log(typeof sub);
       return sub;
     } catch (error) {
       return null;
@@ -39,6 +48,10 @@ export class MemberController {
   }
 
   @Post('/delete')
+  @ApiOperation({
+    summary: '회원탈퇴',
+    description: '회원탈퇴',
+  })
   async deleteMember(@Req() req: UserRequest) {
     const memberId = req.user.id;
     return this.memberService.deleteMember(memberId);
@@ -46,20 +59,34 @@ export class MemberController {
 
   @Public()
   @Post('/signup')
+  @ApiOperation({
+    summary: '회원가입',
+    description: '사용자 정보를 추가합니다.',
+  })
+  @ApiBody({ type: Signup2Dto })
+  @ApiResponse({ status: 201, description: '회원가입에 성공하였습니다' })
+  @ApiResponse({ status: 400, description: '회원가입에 실패하였습니다' })
+  @ApiBearerAuth()
   async createMember(
     @Req() req: UserRequest,
-    @Body() memberEntity: MemberEntity,
+    @Body() userInfo: Signup2Dto,
     @Headers('Authorization') authHeader: string,
   ) {
     const oauthId = this.extractSubFromToken(authHeader);
     if (!oauthId) {
       return 'Invalid token';
     }
-    memberEntity.oauthId = oauthId;
-    const member = await this.memberService.signup(memberEntity);
+    const newUserInfo: SignupDto = {
+      authorizationCode: userInfo.authorizationCode,
+      oauthId: oauthId,
+      nickname: userInfo.nickname,
+    };
+
+    const member = await this.memberService.signup(newUserInfo);
     if (!member) {
       return null;
     }
+    console.log('member: ', member);
     // JWT 토큰 생성
     const token = this.jwtService.sign(member);
     const decodedToken = this.jwtService.decode(token);
@@ -68,6 +95,11 @@ export class MemberController {
 
   @Public()
   @Get('/signin')
+  @ApiOperation({
+    summary: '로그인',
+    description: '로그인',
+  })
+  @ApiResponse({ status: 201, description: '로그인에 성공하였습니다' })
   async getMember(@Headers('Authorization') authHeader: string) {
     const oauthId = this.extractSubFromToken(authHeader);
     const member = await this.memberService.signin(oauthId);
@@ -81,6 +113,10 @@ export class MemberController {
   }
 
   @Get('/oauthId')
+  @ApiOperation({
+    summary: 'oauthId를 통해 memberid추출',
+    description: 'oauthId를 통해 memberid추출',
+  })
   async getOAuthId(
     @Headers('Authorization') authHeader: string,
   ): Promise<FetchOAuthIdResponseDto> {
