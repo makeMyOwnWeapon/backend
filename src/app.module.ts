@@ -15,6 +15,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { MemberAuthGuard } from 'src/auth/auth.guard';
 import { AppGateway } from './socket/socket';
 import { LLMModule } from './llm/llm.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { LLMModule } from './llm/llm.module';
     QuizModule,
     AnalyticsModule,
     LLMModule,
+    EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [

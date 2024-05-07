@@ -4,7 +4,6 @@ import { GptUsageHistoryEntity } from './gpt-usage-history';
 import { DefaultEntity } from './default-entity';
 import { QuizSetEntity } from './quiz-set.entity';
 import { RecommendationEntity } from './recommendation-entity';
-import { QuizResultEntity } from './quiz-result.entity';
 
 @Entity('members')
 export class MemberEntity extends DefaultEntity {
@@ -37,9 +36,6 @@ export class MemberEntity extends DefaultEntity {
     (recommendations) => recommendations.member,
   )
   recommendations: RecommendationEntity[];
-
-  @OneToMany(() => QuizResultEntity, (quizResults) => quizResults.member)
-  quizResults: QuizResultEntity[];
 }
 
 export enum AuthorizationCode {

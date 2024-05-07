@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuizEntity } from '../entities/quiz.entity';
@@ -10,6 +10,8 @@ import { LectureModule } from '../lecture/lecture.module';
 import { MemberModule } from 'src/member/member.module';
 import { MemberEntity } from 'src/entities/member.entity';
 import { LLMModule } from 'src/llm/llm.module';
+import { HistoryModule } from 'src/history/history.module';
+import { QuizResultEntity } from 'src/entities/quiz-result.entity';
 
 @Module({
   imports: [
@@ -19,8 +21,10 @@ import { LLMModule } from 'src/llm/llm.module';
       QuizSetEntity,
       ChoiceEntity,
       RecommendationEntity,
+      QuizResultEntity,
     ]),
     LectureModule,
+    forwardRef(() => HistoryModule),
     MemberModule,
     LLMModule,
   ],

@@ -13,6 +13,8 @@ import { RecommendationEntity } from '../entities/recommendation-entity';
 import { ReadQuizSetDTO, ReadCertainLectureQuizDTO } from './dto/quiz_sets.dto';
 import { MemberEntity } from 'src/entities/member.entity';
 import { SubLectureEntity } from 'src/entities/sub-lecture.entity';
+import { QuizResultEntity } from '../entities/quiz-result.entity';
+import { LectureHistoryEntity } from 'src/entities/lecture-history.entity';
 import { QuizDTO } from './dto/quiz.dto';
 
 @Injectable()
@@ -26,7 +28,46 @@ export class QuizService {
     private readonly choiceRepository: Repository<ChoiceEntity>,
     @InjectRepository(RecommendationEntity)
     private readonly recommendationRepository: Repository<RecommendationEntity>,
+    @InjectRepository(QuizResultEntity)
+    private readonly quizResultRepository: Repository<QuizResultEntity>,
   ) {}
+
+  async createQuizResult(
+    isCorrect,
+    solvedDuration,
+    quiz: QuizEntity,
+    choice: ChoiceEntity,
+    lectureHistory: LectureHistoryEntity,
+  ) {
+    try {
+      // QuizResultEntity 생성
+      const newQuizResult = new QuizResultEntity();
+      newQuizResult.isCorrect = isCorrect;
+      newQuizResult.solvedDuration = solvedDuration;
+      newQuizResult.quiz = quiz;
+      newQuizResult.choice = choice;
+      newQuizResult.lectureHistories = lectureHistory;
+
+      // 데이터베이스에 저장
+      const savedQuizResult =
+        await this.quizResultRepository.save(newQuizResult);
+
+      // 저장된 QuizResultEntity의 id 반환
+      return savedQuizResult.id;
+    } catch (error) {
+      throw new NotFoundException('Failed to create quiz result');
+    }
+  }
+
+  async retrieveChoiceEntityByChoiceId(
+    choiceId: number,
+  ): Promise<ChoiceEntity> {
+    // 문제와 해당 문제에 대한 선택지, 정답 여부, 해설 가져오기
+    const choice = await this.choiceRepository.findOne({
+      where: { id: choiceId },
+    });
+    return choice;
+  }
 
   async retrieveQuizEntity(subLectureId: number): Promise<QuizEntity[]> {
     // 문제와 해당 문제에 대한 선택지, 정답 여부, 해설 가져오기
@@ -37,31 +78,41 @@ export class QuizService {
     return quizzes;
   }
 
+  async retrieveQuizEntityByQuizId(quizId: number): Promise<QuizEntity> {
+    // 문제와 해당 문제에 대한 선택지, 정답 여부, 해설 가져오기
+    const quizzes = await this.quizRepository.findOne({
+      where: { id: quizId },
+    });
+    return quizzes;
+  }
+
   async updateRecommandation(
     memberId: number,
     quizSetId: number,
   ): Promise<number> {
-    const existingRecommandation = await this.recommendationRepository.findOne({
-      where: {
-        member: { id: memberId },
-        quizSet: { id: quizSetId },
-      },
-    });
-    if (!existingRecommandation) {
-      //Up인 경우
-      const newRecommendation = this.recommendationRepository.create({
-        member: { id: memberId },
-        quizSet: { id: quizSetId },
-      });
-      await this.recommendationRepository.save(newRecommendation);
-      return 1;
+    try {
+      const existingRecommendation =
+        await this.recommendationRepository.findOne({
+          where: {
+            member: { id: memberId },
+            quizSet: { id: quizSetId },
+          },
+        });
+
+      if (!existingRecommendation) {
+        const newRecommendation = this.recommendationRepository.create({
+          member: { id: memberId },
+          quizSet: { id: quizSetId },
+        });
+        await this.recommendationRepository.save(newRecommendation);
+        return 1; // Up
+      } else {
+        await this.recommendationRepository.remove(existingRecommendation);
+        return -1; // Down
+      }
+    } catch (error) {
+      throw new NotFoundException('Recommendation not found');
     }
-    if (existingRecommandation) {
-      //down인 경우
-      this.recommendationRepository.remove(existingRecommandation);
-      return -1;
-    }
-    return 0;
   }
 
   async insertQuizSets(

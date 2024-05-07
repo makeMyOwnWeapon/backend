@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
@@ -18,7 +18,7 @@ import { QuizModule } from 'src/quiz/quiz.module';
       GptUsageHistoryEntity,
       QuizResultEntity,
     ]),
-    QuizModule,
+    forwardRef(() => QuizModule),
     MemberModule,
     LectureModule,
   ],

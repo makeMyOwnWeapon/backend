@@ -17,6 +17,7 @@ import { MemberService } from 'src/member/member.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SubLectureIdRetrieveResponseDto } from './dto/SubLectureIdRetrieveResponse.dto';
 import { SubLectureCreateRequestDto } from './dto/SubLectureCreateRequest.dto';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @ApiTags('lectures')
 @Controller('lecture')
@@ -42,6 +43,10 @@ export class LectureController {
     );
   }
 
+  @OnEvent('member.connection')
+  handleMemberConnection(payload: any) {
+    console.log('Received member connection event:', payload);
+  }
   @Patch('/sub-lecture/history/:lectureHistoryId')
   @ApiOperation({
     summary: '학습 종료 시각 기록',
