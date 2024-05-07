@@ -14,6 +14,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { APP_GUARD } from '@nestjs/core';
 import { MemberAuthGuard } from 'src/auth/auth.guard';
 import { AppGateway } from './socket/socket';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AppGateway } from './socket/socket';
     AuthModule,
     QuizModule,
     AnalyticsModule,
+    EventEmitterModule.forRoot()
   ],
   controllers: [AppController],
   providers: [
@@ -44,9 +46,9 @@ import { AppGateway } from './socket/socket';
       provide: APP_GUARD,
       useClass: MemberAuthGuard,
     },
-    AppGateway,
+    AppGateway
   ],
-  exports: [AppGateway],
+  exports:[AppGateway]
 })
 export class AppModule {
   constructor(private datasource: DataSource) {}

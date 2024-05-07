@@ -1,22 +1,17 @@
-// src/gateway/app.gateway.ts
-import {
-  WebSocketGateway,
-  SubscribeMessage,
-  WebSocketServer,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-} from '@nestjs/websockets';
+                                                              import { WebSocketGateway, SubscribeMessage, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
-@WebSocketGateway(4000, { cors: 'localhost:3000' })
+@WebSocketGateway(4000, { cors: true })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private jwtService: JwtService) {}
   private hashTable = new Map();
+
+  constructor(private jwtService: JwtService, private eventEmitter: EventEmitter2) {}
 
   @WebSocketServer() server: Server;
 
-  handleConnection(client: any, ...args: any[]) {
+  handleConnection(client: any) {
     console.log('Client connected:', client.id);
   }
 
@@ -27,15 +22,18 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('sendData')
   Hashing(client: Socket, data: any) {
     const MemberID = this.jwtService.decode(data.token).id;
-    this.hashTable.set(MemberID, data.socketId);
+    const connectionInfo = { socketId: data.socketId, subLectureId: data.subLectureId };
+    this.hashTable.set(MemberID, connectionInfo);
+    this.eventEmitter.emit('member.connection', { MemberID, ...connectionInfo });
+    console.log('Hash Table Updated:', this.hashTable);
   }
 
   wakeup(message: any) {
     if (!this.hashTable.has(message)) {
       throw new Error('에러발생');
     }
-    const socketId = this.hashTable.get(message);
-
-    this.server.to(socketId).emit('wakeup', 'hello');
+    const connectionInfo = this.hashTable.get(message);
+    console.log('Sending wakeup to:', connectionInfo.socketId);
+    this.server.to(connectionInfo.socketId).emit('wakeup', 'hello');
   }
 }
