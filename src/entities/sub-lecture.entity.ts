@@ -3,7 +3,6 @@ import { MainLectureEntity } from './main-lecture.entity';
 import { LectureHistoryEntity } from './lecture-history.entity';
 import { DefaultEntity } from './default-entity';
 import { QuizSetEntity } from './quiz-set.entity';
-import { VideoAnalyticsHistoryEntity } from './video-analytics-history.entity';
 
 @Entity('sub_lectures')
 export class SubLectureEntity extends DefaultEntity {
@@ -28,10 +27,4 @@ export class SubLectureEntity extends DefaultEntity {
 
   @OneToMany(() => QuizSetEntity, (quizSets) => quizSets.subLecture)
   quizSets: QuizSetEntity[];
-
-  @OneToMany(
-    () => VideoAnalyticsHistoryEntity,
-    (videoAnalyticsHistories) => videoAnalyticsHistories.subLecture,
-  )
-  videoAnalyticsHistories: VideoAnalyticsHistoryEntity[];
 }

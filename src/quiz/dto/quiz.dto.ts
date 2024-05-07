@@ -54,10 +54,6 @@ export class CreateQuizSetDTO {
   @IsString()
   mainLectureTitle: string;
 
-  @ApiProperty({ description: '강사 이름' })
-  @IsString()
-  lecturerName: string;
-
   @ApiProperty({ description: '영상 길이' })
   @IsInt()
   duration: number;

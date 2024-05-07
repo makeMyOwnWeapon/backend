@@ -6,10 +6,6 @@ import { DefaultEntity } from './default-entity';
 export class MainLectureEntity extends DefaultEntity {
   @Column({ nullable: false })
   title: string;
-
-  @Column({ nullable: false })
-  lecturer_name: string;
-
   @OneToMany(() => SubLectureEntity, (subLecture) => subLecture.mainLecture)
   subLectures: SubLectureEntity[];
 }

@@ -1,32 +1,25 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
-import { SubLectureEntity } from "../../entities/sub-lecture.entity";
-import { MemberEntity } from "../../entities/member.entity";
-import { VideoAnalyticsHistoryEntity } from "../../entities/video-analytics-history.entity";
+import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { LectureHistoryEntity } from 'src/entities/lecture-history.entity';
+import { VideoAnalyticsHistoryEntity } from '../../entities/video-analytics-history.entity';
 
-export class AnalyticsOccurRequestDto {
+export class AnalyticsSaveRequestDto {
   @IsNotEmpty()
   @IsString()
-  readonly startAt: string;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly endAt: string;
+  readonly startedAt: string;
 
   @IsNotEmpty()
   @IsString()
-  readonly analysisType: string;
+  readonly endedAt: string;
 
   @IsNotEmpty()
-  @IsString()
-  readonly sublectureId?: string;
-
-  toEntity(subLecture: SubLectureEntity, member: MemberEntity): VideoAnalyticsHistoryEntity {
+  @IsNumber()
+  readonly analysisType: number;
+  toEntity(lectureHistory: LectureHistoryEntity): VideoAnalyticsHistoryEntity {
     const entity = new VideoAnalyticsHistoryEntity();
-    entity.startedAt = new Date(this.parseDateString(this.startAt));
-    entity.endedAt = new Date(this.parseDateString(this.endAt));
+    entity.startedAt = new Date(this.parseDateString(this.startedAt));
+    entity.endedAt = new Date(this.parseDateString(this.endedAt));
     entity.analysisType = Number(this.analysisType);
-    entity.subLecture = subLecture;
-    entity.member = member;
+    entity.lectureHistories = lectureHistory;
     return entity;
   }
 
