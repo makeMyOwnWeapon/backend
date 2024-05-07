@@ -25,6 +25,19 @@ export class HistoryService {
     @InjectRepository(QuizResultEntity)
     private readonly quizResultEntity: Repository<QuizResultEntity>,
   ) {}
+
+  async retrieveLectureHistoryEntity(
+    lectureHistoryId: number,
+  ): Promise<LectureHistoryEntity> {
+    const lectureHistory = await this.lectureHistoryRepository.findOne({
+      where: { id: lectureHistoryId },
+    });
+    if (!lectureHistory) {
+      throw new Error('lectureHistory not found');
+    }
+    return lectureHistory;
+  }
+
   async readHistories(memberId: number): Promise<ReadHistoriesDTO[]> {
     try {
       // 사용자의 레포트 목록을 조회합니다.
@@ -38,7 +51,6 @@ export class HistoryService {
         subLectureId: history.subLecture.id,
         subLectureTitle: history.subLecture.title,
         subLectureUrl: history.subLecture.url,
-        lecturerName: history.subLecture.mainLecture.lecturer_name,
         registrationDate: history.createdAt,
       }));
     } catch (error) {

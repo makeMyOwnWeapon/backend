@@ -78,7 +78,6 @@ export class QuizController {
   ) {
     const mainLectureId = await this.lectureService.insertMainLectures(
       quizInfo.mainLectureTitle,
-      quizInfo.lecturerName,
     );
     const subLectureId = await this.lectureService.insertSubLectures(
       decodeURIComponent(quizInfo.subLectureUrl),

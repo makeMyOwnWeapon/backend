@@ -24,5 +24,6 @@ import { QuizModule } from 'src/quiz/quiz.module';
   ],
   providers: [HistoryService],
   controllers: [HistoryController],
+  exports: [HistoryService],
 })
 export class HistoryModule {}
