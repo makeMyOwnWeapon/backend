@@ -9,6 +9,8 @@ import { LectureHistoryInitRequestDto } from './dto/LectureHistoryInitRequest.dt
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 import { MemberEntity } from 'src/entities/member.entity';
 import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
+import { SubLectureIdRetrieveResponseDto } from './dto/SubLectureIdRetrieveResponse.dto';
+import { SubLectureCreateRequestDto } from './dto/SubLectureCreateRequest.dto';
 
 @Injectable()
 export class LectureService {
@@ -126,6 +128,51 @@ export class LectureService {
       lectureHistoryId: (
         await this.lectureHistoryRepository.save(lectureHistory)
       ).id,
+    };
+  }
+
+  async retrieveSubLectureId(
+    url: string,
+  ): Promise<SubLectureIdRetrieveResponseDto> {
+    return await this.subLectureRepository
+      .createQueryBuilder('subLecture')
+      .select('subLecture.id', 'subLectureId')
+      .where('subLecture.url = :url', { url })
+      .getRawOne();
+  }
+
+  async createSubLecture(
+    mainLectureTitle: string,
+    dto: SubLectureCreateRequestDto,
+  ): Promise<SubLectureIdRetrieveResponseDto> {
+    let mainLecture = await this.mainLectureRepository.findOne({
+      where: { title: mainLectureTitle },
+    });
+    if (!mainLecture) {
+      const newMainLecture = this.mainLectureRepository.create({
+        title: mainLectureTitle,
+      });
+      mainLecture = await this.mainLectureRepository.save(newMainLecture);
+    }
+
+    const { url, title, duration } = dto;
+    const decodedUrl = decodeURIComponent(url);
+    const existingSubLecture = await this.subLectureRepository.findOne({
+      where: { url: decodedUrl },
+    });
+    if (existingSubLecture) {
+      return { subLectureId: existingSubLecture.id };
+    }
+
+    const newSubLecture = this.subLectureRepository.create({
+      url: decodedUrl,
+      title,
+      duration,
+      mainLecture,
+    });
+    await this.subLectureRepository.save(newSubLecture);
+    return {
+      subLectureId: newSubLecture.id,
     };
   }
 }
