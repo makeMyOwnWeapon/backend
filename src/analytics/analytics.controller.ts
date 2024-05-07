@@ -53,7 +53,9 @@ export class AnalyticsController {
   //     //const memberId = req.user.id;
   //     //TODO: 소켓에서 유저아이디가 듣고있는 수강기록 아이디를 받아온다
   //     const lectureHistoryEntity =
-  //       await this.historyService.retrieveLectureHistoryEntity(lectureHistoryId);
+  //       await this.historyService.retrieveLectureHistoryEntity(
+  //         lectureHistoryId,
+  //       );
   //     const videoAnalyticsHistoryEntity =
   //       analyticsSaveRequestDto.toEntity(lectureHistoryEntity);
   //     await this.analyticsService.saveVideoAnalyticsHistory(
