@@ -9,6 +9,7 @@ import { QuizController } from './quiz.controller';
 import { LectureModule } from '../lecture/lecture.module';
 import { MemberModule } from 'src/member/member.module';
 import { MemberEntity } from 'src/entities/member.entity';
+import { LLMModule } from 'src/llm/llm.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MemberEntity } from 'src/entities/member.entity';
     ]),
     LectureModule,
     MemberModule,
+    LLMModule,
   ],
   providers: [QuizService],
   controllers: [QuizController],

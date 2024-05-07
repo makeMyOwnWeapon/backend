@@ -85,5 +85,7 @@ export default class LLMService {
     return JSON.parse(dto);
   }
 
+  async generateQuiz(script: string): Promise<QuizDTO> {
+    return this.getResponseContentJson(this.createClaudeCompletion(script));
   }
 }

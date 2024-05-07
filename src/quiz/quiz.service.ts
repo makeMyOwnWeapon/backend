@@ -13,6 +13,7 @@ import { RecommendationEntity } from '../entities/recommendation-entity';
 import { ReadQuizSetDTO, ReadCertainLectureQuizDTO } from './dto/quiz_sets.dto';
 import { MemberEntity } from 'src/entities/member.entity';
 import { SubLectureEntity } from 'src/entities/sub-lecture.entity';
+import { QuizDTO } from './dto/quiz.dto';
 
 @Injectable()
 export class QuizService {
@@ -134,6 +135,7 @@ export class QuizService {
     await this.quizRepository.save(newQuizzes);
     return newQuizzes.id;
   }
+
   async insertChoices(choices, quizzesId): Promise<number> {
     const quizzes = await this.quizRepository.findOne({
       where: { id: quizzesId },
@@ -246,5 +248,50 @@ export class QuizService {
     );
 
     return allQuizSet;
+  }
+
+  /**
+   * 문제집이 이미 있으면 해당 문제집의 id를 반환하고 없으면 새로 생성한 문제집 엔터티를 반환한다.
+   * @param title 문제집명
+   * @param subLecture 소강의 엔터티
+   * @param member 회원 엔터티
+   * @returns 생성된 문제집 엔터티
+   */
+  async upsertQuizSets(
+    title: string,
+    subLecture: SubLectureEntity,
+    member: MemberEntity,
+  ): Promise<QuizSetEntity> {
+    const existingQuizSets = await this.quizSetRepository.findOne({
+      where: {
+        title,
+        member: { id: member.id },
+        subLecture: { id: subLecture.id },
+      },
+    });
+    if (existingQuizSets) {
+      return existingQuizSets;
+    }
+    const newQuizSets = this.quizSetRepository.create({
+      title,
+      member,
+      subLecture: { id: subLecture.id },
+    });
+    return await this.quizSetRepository.save(newQuizSets);
+  }
+
+  async upsertQuizSetWithQuiz(
+    title: string,
+    subLecture: SubLectureEntity,
+    member: MemberEntity,
+    quiz: QuizDTO,
+  ): Promise<QuizDTO> {
+    const quizSets = await this.upsertQuizSets(title, subLecture, member);
+
+    const quizzesId = await this.insertQuizzes(quiz, quizSets.id);
+    for (let j = 0; j < quiz.choices.length; j++) {
+      await this.insertChoices(quiz.choices[j], quizzesId);
+    }
+    return quiz;
   }
 }

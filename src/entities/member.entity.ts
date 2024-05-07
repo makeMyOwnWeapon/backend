@@ -45,4 +45,5 @@ export class MemberEntity extends DefaultEntity {
 export enum AuthorizationCode {
   STUDENT,
   TEACHER,
+  AI_QUIZ_MAKER,
 }
