@@ -6,10 +6,9 @@ import {
   Patch,
   Post,
   Query,
-  Req,
 } from '@nestjs/common';
-import { UserRequest } from '../auth/UserRequest';
-import { LectureHistoryInitRequestDto } from './dto/LectureHistoryInitRequest.dto';
+// import { UserRequest } from '../auth/UserRequest';
+// import { LectureHistoryInitRequestDto } from './dto/LectureHistoryInitRequest.dto';
 import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
 import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
 import { LectureService } from './lecture.service';
@@ -27,26 +26,30 @@ export class LectureController {
     private memberService: MemberService,
   ) {}
 
-  @Post('/sub-lecture/history')
-  @ApiOperation({
-    summary: '수강기록 초기값 생성 (= 학습 시작)',
-    description: '수강기록 초기값 생성 (= 학습 시작)',
-  })
-  initHistory(
-    @Req() req: UserRequest,
-    @Body() dto: LectureHistoryInitRequestDto,
-  ): Promise<LectureHistoryResponseDto> {
-    const memberId = req.user.id;
-    return this.lectureService.initializeLectureHistory(
-      dto,
-      this.memberService.retrieveMemberEntity(memberId),
-    );
-  }
+  // @Post('/sub-lecture/history')
+  // @ApiOperation({
+  //   summary: '수강기록 초기값 생성 (= 학습 시작)',
+  //   description: '수강기록 초기값 생성 (= 학습 시작)',
+  // })
+  // initHistory(
+  //   @Req() req: UserRequest,
+  //   @Body() dto: LectureHistoryInitRequestDto,
+  // ): Promise<LectureHistoryResponseDto> {
+  //   const memberId = req.user.id;
+  //   return this.lectureService.initializeLectureHistory(
+  //     dto,
+  //     this.memberService.retrieveMemberEntity(memberId),
+  //   );
+  // }
 
   @OnEvent('member.connection')
   handleMemberConnection(payload: any) {
-    console.log('Received member connection event:', payload);
+    return this.lectureService.initializeLectureHistory(
+      this.memberService.retrieveMemberEntity(payload.memberId),
+      payload.subLectureId,
+    );
   }
+
   @Patch('/sub-lecture/history/:lectureHistoryId')
   @ApiOperation({
     summary: '학습 종료 시각 기록',
