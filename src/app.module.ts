@@ -44,9 +44,9 @@ import { AppGateway } from './socket/socket';
       provide: APP_GUARD,
       useClass: MemberAuthGuard,
     },
-    AppGateway
+    AppGateway,
   ],
-  exports:[AppGateway]
+  exports: [AppGateway],
 })
 export class AppModule {
   constructor(private datasource: DataSource) {}

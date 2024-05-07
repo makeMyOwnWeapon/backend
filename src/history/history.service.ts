@@ -21,9 +21,9 @@ export class HistoryService {
     @InjectRepository(VideoAnalyticsHistoryEntity)
     private readonly videoAnalyticsHistoryRepository: Repository<VideoAnalyticsHistoryEntity>,
     @InjectRepository(GptUsageHistoryEntity)
-    private readonly gptUsageHistoryEntity: Repository<GptUsageHistoryEntity>,
+    private readonly gptUsageHistoryRepository: Repository<GptUsageHistoryEntity>,
     @InjectRepository(QuizResultEntity)
-    private readonly quizResultEntity: Repository<QuizResultEntity>,
+    private readonly quizResultRepository: Repository<QuizResultEntity>,
   ) {}
 
   async retrieveLectureHistoryEntity(
@@ -77,7 +77,7 @@ export class HistoryService {
         });
 
       // 퀴즈 결과 가져오기
-      const quizResults = await this.quizResultEntity.find({
+      const quizResults = await this.quizResultRepository.find({
         where: { lectureHistories: { id: lectureHistory.id } },
         relations: ['quiz', 'choice'],
       });

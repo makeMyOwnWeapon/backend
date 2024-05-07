@@ -2,8 +2,10 @@ import { Body, Controller, Post, Get, Param, Query, Req } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO } from './dto/quiz.dto';
 import { RecommendationDTO } from './dto/quiz_sets.dto';
+import { CreateQuizResultDTO } from './dto/quiz_result.dto';
 import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
+import { HistoryService } from 'src/history/history.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserRequest } from '../auth/UserRequest';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -15,13 +17,37 @@ export class QuizController {
     private quizService: QuizService,
     private lectureService: LectureService,
     private memberService: MemberService,
+    private historyService: HistoryService,
     private jwtService: JwtService,
   ) {}
+
+  @Post('/quizResults')
+  @ApiOperation({
+    summary: '사용자 문제풀이 결과 저장',
+  })
+  async createQuizResult(@Body() quizResult: CreateQuizResultDTO) {
+    const quiz = await this.quizService.retrieveQuizEntityByQuizId(
+      quizResult.quizId,
+    );
+    const choice = await this.quizService.retrieveChoiceEntityByChoiceId(
+      quizResult.choiceId,
+    );
+    const lectureHistory =
+      await this.historyService.retrieveLectureHistoryEntity(
+        quizResult.lectureHistoriesId,
+      );
+    return await this.quizService.createQuizResult(
+      quizResult.isCorrect,
+      quizResult.solvedDuration,
+      quiz,
+      choice,
+      lectureHistory,
+    );
+  }
 
   @Get('/')
   @ApiOperation({
     summary: '특정강의의 문제집 조회',
-    description: '특정강의의 문제집 조회',
   })
   async readQuiz(@Query('subLectureUrl') subLectureUrlEncoded: string) {
     if (subLectureUrlEncoded) {
