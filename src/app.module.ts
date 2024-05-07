@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmCoreModule } from '@nestjs/typeorm/dist/typeorm-core.module';
 import { getTypeOrmConfig } from './configs/typeorm.config';
 import { DataSource } from 'typeorm';
@@ -44,9 +44,9 @@ import { AppGateway } from './socket/socket';
       provide: APP_GUARD,
       useClass: MemberAuthGuard,
     },
-    AppGateway
+    AppGateway,
   ],
-  exports:[AppGateway]
+  exports: [AppGateway],
 })
 export class AppModule {
   constructor(private datasource: DataSource) {}

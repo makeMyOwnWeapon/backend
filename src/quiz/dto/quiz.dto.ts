@@ -29,7 +29,7 @@ export class QuizDTO {
 
   @ApiProperty({ description: '문제 팝업시간' })
   @IsString()
-  popupTime: string; // 초 단위 정수
+  popupTime: string; // 초 단위 정수(hh:mm:ss)
 
   @ApiProperty({ description: '선택지' })
   @ValidateNested()
