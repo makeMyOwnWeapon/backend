@@ -11,6 +11,7 @@ import { MemberEntity } from 'src/entities/member.entity';
 import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
 import { SubLectureIdRetrieveResponseDto } from './dto/SubLectureIdRetrieveResponse.dto';
 import { SubLectureCreateRequestDto } from './dto/SubLectureCreateRequest.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class LectureService {
@@ -23,6 +24,7 @@ export class LectureService {
     private readonly lectureImageUrlRepository: Repository<LectureImageUrlEntity>,
     @InjectRepository(LectureHistoryEntity)
     private readonly lectureHistoryRepository: Repository<LectureHistoryEntity>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async retrieveSubLectureEntity(
@@ -96,17 +98,21 @@ export class LectureService {
   async initializeLectureHistory(
     member: Promise<MemberEntity>,
     subLectureId: number,
-  ) {
+  ): Promise<{ lectureHistoryId: number }> {
     const lectureHistory = this.lectureHistoryRepository.create({
       subLecture: { id: subLectureId },
       member: await member,
     });
     lectureHistory.startedAt = new Date();
-    return {
-      lectureHistoryId: (
-        await this.lectureHistoryRepository.save(lectureHistory)
-      ).id,
-    };
+    const savedLectureHistory = await this.lectureHistoryRepository.save(lectureHistory);
+
+    this.eventEmitter.emit('lectureHistory.created', {
+      memberId: (await member).id,
+      lectureHistoryId: savedLectureHistory.id,
+      subLectureId: subLectureId
+    });
+
+    return { lectureHistoryId: savedLectureHistory.id };
   }
 
   async finalizeLectureHistory(

@@ -8,6 +8,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @WebSocketGateway(4000, { cors: true })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -17,8 +18,25 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private jwtService: JwtService,
     private eventEmitter: EventEmitter2,
   ) {}
+  
 
   @WebSocketServer() server: Server;
+
+  @OnEvent('lectureHistory.created')
+  handleLectureHistoryCreated(payload: any) {
+    console.log(payload.memberId);
+    if (this.hashTable.has(payload.memberId)) {
+      const existingInfo = this.hashTable.get(payload.memberId);
+      const updatedInfo = {
+        ...existingInfo,
+        lectureHistoryId: payload.lectureHistoryId
+      };
+      this.hashTable.set(payload.memberId, updatedInfo);
+      console.log('Hash Table Updated with Lecture History:', this.hashTable);
+    } else {
+      console.log('Member ID not found in hashTable when trying to add lectureHistoryId');
+    }
+  }
 
   handleConnection(client: any) {
     console.log('Client connected:', client.id);
@@ -30,18 +48,20 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('sendData')
   Hashing(client: Socket, data: any) {
-    const MemberID = this.jwtService.decode(data.token).id;
+    const memberId = this.jwtService.decode(data.token).id;
     const connectionInfo = {
       socketId: data.socketId,
       subLectureId: data.subLectureId,
+      lectureHistoryId: null 
     };
-    this.hashTable.set(MemberID, connectionInfo);
+    this.hashTable.set(memberId, connectionInfo);
     this.eventEmitter.emit('member.connection', {
-      MemberID,
+      memberId,
       ...connectionInfo,
     });
     console.log('Hash Table Updated:', this.hashTable);
   }
+
 
   wakeup(message: any) {
     if (!this.hashTable.has(message)) {

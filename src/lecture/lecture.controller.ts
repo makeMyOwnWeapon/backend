@@ -44,7 +44,12 @@ export class LectureController {
 
   @OnEvent('member.connection')
   handleMemberConnection(payload: any) {
+    console.log(payload.memberId);
+    console.log(payload.memberId);
+    console.log(payload.memberId);
+    console.log(payload.memberId);
     return this.lectureService.initializeLectureHistory(
+      
       this.memberService.retrieveMemberEntity(payload.memberId),
       payload.subLectureId,
     );
