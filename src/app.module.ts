@@ -14,6 +14,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { APP_GUARD } from '@nestjs/core';
 import { MemberAuthGuard } from 'src/auth/auth.guard';
 import { AppGateway } from './socket/socket';
+import { LLMModule } from './llm/llm.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AppGateway } from './socket/socket';
     AuthModule,
     QuizModule,
     AnalyticsModule,
+    LLMModule,
   ],
   controllers: [AppController],
   providers: [
