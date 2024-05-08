@@ -18,7 +18,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private jwtService: JwtService,
     private eventEmitter: EventEmitter2,
   ) {}
-  
+
   @WebSocketServer() server: Server;
 
   @OnEvent('lectureHistory.created')
@@ -28,12 +28,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const existingInfo = this.hashTable.get(memberIdNum);
       const updatedInfo = {
         ...existingInfo,
-        lectureHistoryId: payload.lectureHistoryId
+        lectureHistoryId: payload.lectureHistoryId,
       };
       this.hashTable.set(memberIdNum, updatedInfo);
       console.log('Hash Table Updated with Lecture History:', this.hashTable);
     } else {
-      console.log('Member ID not found in hashTable when trying to add lectureHistoryId');
+      console.log(
+        'Member ID not found in hashTable when trying to add lectureHistoryId',
+      );
     }
   }
 
@@ -69,17 +71,17 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(connectionInfo.socketId).emit('wakeup', 'hello');
   }
 
-  getLectureHistoryId(memberId: string): number | undefined {
+  getLectureHistoryId(memberId: number): number | undefined {
     const memberIdNum = Number(memberId);
-    console.log("Fetching lecture history ID for memberId:", memberIdNum);
-    console.log("Current hash table state:", this.hashTable);
-  
+    console.log('Fetching lecture history ID for memberId:', memberIdNum);
+    console.log('Current hash table state:', this.hashTable);
+
     if (this.hashTable.has(memberIdNum)) {
       const userInfo = this.hashTable.get(memberIdNum);
-      console.log("Found user info:", userInfo);
+      console.log('Found user info:', userInfo);
       return userInfo.lectureHistoryId;
     } else {
-      console.log("No lecture history ID found for memberId:", memberIdNum);
+      console.log('No lecture history ID found for memberId:', memberIdNum);
       return undefined;
     }
   }
