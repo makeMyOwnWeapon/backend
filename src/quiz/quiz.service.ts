@@ -289,7 +289,7 @@ export class QuizService {
         instruction: quiz.instruction,
         ...(isSeeCommentary && { commentary: quiz.commentary }), // isSeeCommentary true일 때만 commentary를 추가
         popupTime: quiz.popupTime,
-        choice: choiceDetails,
+        choices: choiceDetails,
       });
     }
 

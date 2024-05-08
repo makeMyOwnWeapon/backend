@@ -14,7 +14,7 @@ export class AIQuizCreateRequestDTO {
 
   @ApiProperty({ description: '팝업될 시각' })
   @IsInt()
-  popuptime: number;
+  popupTime: number;
 }
 
 export class AIQuizCreateResponseDTO {

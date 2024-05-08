@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Get,
-  Param,
-  Query,
-  Req,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Query, Req } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO, NoTimeConvertingQuizDTO } from './dto/quiz.dto';
 import { RecommendationDTO } from './dto/quiz_sets.dto';
@@ -17,7 +8,6 @@ import { MemberService } from 'src/member/member.service';
 import { HistoryService } from 'src/history/history.service';
 import { UserRequest } from '../auth/UserRequest';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { AuthorizationCode } from 'src/entities/member.entity';
 import { AIQuizCreateRequestDTO } from './dto/ai-quiz-create.dto';
 import LLMService from 'src/llm/llm.service';
 
@@ -155,17 +145,12 @@ export class QuizController {
       'Claude를 통해 강의 스크립트를 입력받아 특정 강의의 문제집을 만들어냄',
   })
   async createQuizWithAI(
-    @Req() req: UserRequest,
     @Body() dto: AIQuizCreateRequestDTO,
   ): Promise<NoTimeConvertingQuizDTO> {
-    const IS_AI_QUIZ_MAKER = req.user.authorizationCode;
-    const AI_ID = req.user.id;
-    if (IS_AI_QUIZ_MAKER !== AuthorizationCode.AI_QUIZ_MAKER) {
-      throw new ForbiddenException('권한이 없습니다');
-    }
+    const AI_ID = 0;
     const AI_QUIZ_MAKER = await this.memberService.retrieveMemberEntity(AI_ID);
     const quiz = await this.llmService.generateQuiz(dto.script);
-    quiz.popupTime = dto.popuptime;
+    quiz.popupTime = dto.popupTime;
     const subLecture = await this.lectureService.retrieveSubLectureEntity(
       dto.subLectureId,
     );
