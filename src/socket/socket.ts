@@ -24,7 +24,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @OnEvent('lectureHistory.created')
   handleLectureHistoryCreated(payload: any) {
-    console.log(payload.memberId);
     if (this.hashTable.has(payload.memberId)) {
       const existingInfo = this.hashTable.get(payload.memberId);
       const updatedInfo = {
@@ -52,14 +51,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const connectionInfo = {
       socketId: data.socketId,
       subLectureId: data.subLectureId,
-      lectureHistoryId: null 
     };
     this.hashTable.set(memberId, connectionInfo);
     this.eventEmitter.emit('member.connection', {
       memberId,
       ...connectionInfo,
     });
-    console.log('Hash Table Updated:', this.hashTable);
   }
 
 
