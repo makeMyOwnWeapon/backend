@@ -86,6 +86,27 @@ export class QuizService {
     return quizzes;
   }
 
+  async retrieveQuizEntityByChoiceId(choiceId: number): Promise<QuizEntity> {
+    // 문제와 해당 문제에 대한 선택지, 정답 여부, 해설 가져오기
+    try {
+      // 선택지 ID에 해당하는 선택지 엔티티 가져오기
+      const choice = await this.choiceRepository.findOne({
+        where: { id: choiceId },
+        relations: ['quiz'],
+      });
+      if (!choice) {
+        throw new Error('Choice not found');
+      }
+
+      // 선택지에 연결된 퀴즈 엔티티 반환
+      return choice.quiz;
+    } catch (error) {
+      console.error('Failed to retrieve quiz entity by choice ID:', error);
+      // 필요에 따라 예외 처리
+      throw error; // 혹은 다른 예외 처리 방법을 사용할 수 있습니다.
+    }
+  }
+
   async updateRecommandation(
     memberId: number,
     quizSetId: number,

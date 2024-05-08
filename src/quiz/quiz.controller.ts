@@ -38,8 +38,8 @@ export class QuizController {
     summary: '사용자 문제풀이 결과 저장',
   })
   async createQuizResult(@Body() quizResult: CreateQuizResultDTO) {
-    const quiz = await this.quizService.retrieveQuizEntityByQuizId(
-      quizResult.quizId,
+    const quiz = await this.quizService.retrieveQuizEntityByChoiceId(
+      quizResult.choiceId,
     );
     const choice = await this.quizService.retrieveChoiceEntityByChoiceId(
       quizResult.choiceId,

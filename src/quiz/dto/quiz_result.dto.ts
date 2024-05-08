@@ -8,9 +8,9 @@ export class CreateQuizResultDTO {
   @ApiProperty({ description: '푸는데 걸린 시간' })
   @IsInt()
   solvedDuration: number;
-  @ApiProperty({ description: 'quizId' })
-  @IsInt()
-  quizId: number;
+  // @ApiProperty({ description: 'quizId' })
+  // @IsInt()
+  // quizId: number;
   @ApiProperty({ description: 'choiceId' })
   @IsInt()
   choiceId: number;

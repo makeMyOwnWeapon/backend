@@ -91,7 +91,8 @@ export class AnalyticsController {
   ) {
     try {
       const memberId = req.user.id;
-      const memberEntity = await this.memberService.retrieveMemberEntity(memberId);
+      const memberEntity =
+        await this.memberService.retrieveMemberEntity(memberId);
 
       if (!this.appGateway.isConnected(memberId)) {
         throw new Error('소켓 연결이 없습니다.');
@@ -111,7 +112,6 @@ export class AnalyticsController {
     }
   }
 
-  
   // @Get('extension')
   // async authForExtension(@Headers('Authorization') authHeader: string, @Res() res: Response): Promise<ExtensionAuthResponseDto | Response<void>> {
   //   if (!authHeader) {

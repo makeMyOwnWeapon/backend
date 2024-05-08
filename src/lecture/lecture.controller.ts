@@ -7,7 +7,7 @@ import {
   Query,
   Body,
   Injectable,
-  OnModuleInit
+  OnModuleInit,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
@@ -29,8 +29,7 @@ export class LectureController implements OnModuleInit {
     private eventEmitter: EventEmitter2,
   ) {}
 
-  onModuleInit() {
-  }
+  onModuleInit() {}
   // @Post('/sub-lecture/history')
   // @ApiOperation({
   //   summary: '수강기록 초기값 생성 (= 학습 시작)',
@@ -49,18 +48,19 @@ export class LectureController implements OnModuleInit {
 
   @OnEvent('member.disconnect')
   handleMemberDisconnect(payload: any) {
-    console.log(`endedTime  ${payload.endedTime} lectureHistoryId ${payload.lectureHistoryId}`);
+    console.log(
+      `endedTime  ${payload.endedTime} lectureHistoryId ${payload.lectureHistoryId}`,
+    );
   }
 
   @OnEvent('member.connection')
   handleMemberConnection(payload: any) {
     return this.lectureService.initializeLectureHistory(
-      
       this.memberService.retrieveMemberEntity(payload.memberId),
       payload.subLectureId,
     );
   }
-  
+
   @Patch('/sub-lecture/history/:lectureHistoryId')
   @ApiOperation({
     summary: '학습 종료 시각 기록',
