@@ -9,7 +9,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { QuizService } from './quiz.service';
-import { CreateQuizSetDTO } from './dto/quiz.dto';
+import { CreateQuizSetDTO, NoTimeConvertingQuizDTO } from './dto/quiz.dto';
 import { RecommendationDTO } from './dto/quiz_sets.dto';
 import { CreateQuizResultDTO } from './dto/quiz_result.dto';
 import { LectureService } from 'src/lecture/lecture.service';
@@ -18,9 +18,8 @@ import { HistoryService } from 'src/history/history.service';
 import { UserRequest } from '../auth/UserRequest';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AuthorizationCode } from 'src/entities/member.entity';
-import { AIQuizCreateRequestDTO } from './dto/ai-quiz-create-request.dto';
+import { AIQuizCreateRequestDTO } from './dto/ai-quiz-create.dto';
 import LLMService from 'src/llm/llm.service';
-import { QuizDTO } from 'src/quiz/dto/quiz.dto';
 
 @ApiTags('quizsets')
 @Controller('quizsets')
@@ -158,7 +157,7 @@ export class QuizController {
   async createQuizWithAI(
     @Req() req: UserRequest,
     @Body() dto: AIQuizCreateRequestDTO,
-  ): Promise<QuizDTO> {
+  ): Promise<NoTimeConvertingQuizDTO> {
     const IS_AI_QUIZ_MAKER = req.user.authorizationCode;
     const AI_ID = req.user.id;
     if (IS_AI_QUIZ_MAKER !== AuthorizationCode.AI_QUIZ_MAKER) {

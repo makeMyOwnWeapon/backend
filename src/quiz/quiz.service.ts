@@ -15,7 +15,7 @@ import { MemberEntity } from 'src/entities/member.entity';
 import { SubLectureEntity } from 'src/entities/sub-lecture.entity';
 import { QuizResultEntity } from '../entities/quiz-result.entity';
 import { LectureHistoryEntity } from 'src/entities/lecture-history.entity';
-import { QuizDTO } from './dto/quiz.dto';
+import { NoTimeConvertingQuizDTO } from './dto/quiz.dto';
 
 @Injectable()
 export class QuizService {
@@ -187,6 +187,27 @@ export class QuizService {
     return newQuizzes.id;
   }
 
+  async insertQuizWithoutTimeConverting(
+    quiz: NoTimeConvertingQuizDTO,
+    quizSetsId: number,
+  ): Promise<number> {
+    const quizSets = await this.quizSetRepository.findOne({
+      where: { id: quizSetsId },
+    });
+    if (!quizSets) {
+      throw new Error('quizSets not found');
+    }
+    // 존재하지 않는다면 새로운 MainLectureEntity를 생성하고 저장.
+    const newQuizzes = this.quizRepository.create({
+      quizSet: quizSets,
+      instruction: quiz.instruction,
+      commentary: quiz.commentary,
+      popupTime: quiz.popupTime,
+    });
+    await this.quizRepository.save(newQuizzes);
+    return newQuizzes.id;
+  }
+
   async insertChoices(choices, quizzesId): Promise<number> {
     const quizzes = await this.quizRepository.findOne({
       where: { id: quizzesId },
@@ -335,11 +356,13 @@ export class QuizService {
     title: string,
     subLecture: SubLectureEntity,
     member: MemberEntity,
-    quiz: QuizDTO,
-  ): Promise<QuizDTO> {
+    quiz: NoTimeConvertingQuizDTO,
+  ): Promise<NoTimeConvertingQuizDTO> {
     const quizSets = await this.upsertQuizSets(title, subLecture, member);
-
-    const quizzesId = await this.insertQuizzes(quiz, quizSets.id);
+    const quizzesId = await this.insertQuizWithoutTimeConverting(
+      quiz,
+      quizSets.id,
+    );
     for (let j = 0; j < quiz.choices.length; j++) {
       await this.insertChoices(quiz.choices[j], quizzesId);
     }
