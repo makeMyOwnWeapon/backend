@@ -43,38 +43,40 @@ export class AnalyticsController {
   /**
    * 저장용
    * */
-  // @Post('/save')
-  // async handleAnalyticsSave(
-  //   @Req() req: UserRequest,
-  //   @Body() analyticsSaveRequestDto: AnalyticsSaveRequestDto,
-  //   @Res() res: Response,
-  // ) {
-  //   try {
-  //     //const memberId = req.user.id;
-  //     //TODO: 소켓에서 유저아이디가 듣고있는 수강기록 아이디를 받아온다
-  //     const lectureHistoryEntity =
-  //       await this.historyService.retrieveLectureHistoryEntity(
-  //         lectureHistoryId,
-  //       );
-  //     const videoAnalyticsHistoryEntity =
-  //       analyticsSaveRequestDto.toEntity(lectureHistoryEntity);
-  //     await this.analyticsService.saveVideoAnalyticsHistory(
-  //       videoAnalyticsHistoryEntity,
-  //     );
+  @Post('/save')
+async handleAnalyticsSave(
+  @Req() req: UserRequest,
+  @Body() analyticsSaveRequestDto: AnalyticsSaveRequestDto,
+  @Res() res: Response,
+) {
+  try {
+    const memberId = req.user.id;
+    const lectureHistoryId = this.appGateway.getLectureHistoryId(memberId.toString());
+    
+    if (!lectureHistoryId) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: '수강 기록을 찾을 수 없습니다.',
+      });
+    }
+    const lectureHistoryEntity = await this.historyService.retrieveLectureHistoryEntity(
+      lectureHistoryId,
+    );
+    const videoAnalyticsHistoryEntity = analyticsSaveRequestDto.toEntity(lectureHistoryEntity);
+    await this.analyticsService.saveVideoAnalyticsHistory(
+      videoAnalyticsHistoryEntity,
+    );
 
-  //     return res.status(HttpStatus.OK).json({
-  //       message: '데이터가 성공적으로 처리되었습니다.',
-  //       data: analyticsSaveRequestDto,
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-  //       message: '데이터 처리 중 오류가 발생했습니다.',
-  //     });
-
-  //     return res;
-  //   }
-  // }
+    return res.status(HttpStatus.OK).json({
+      message: '데이터가 성공적으로 처리되었습니다.',
+      data: analyticsSaveRequestDto,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      message: '데이터 처리 중 오류가 발생했습니다.',
+    });
+  }
+}
 
   /**
    * 알람용
