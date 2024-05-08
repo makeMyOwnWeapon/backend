@@ -37,6 +37,25 @@ export class QuizDTO {
   choices: ChoiceDTO[];
 }
 
+export class NoTimeConvertingQuizDTO {
+  @ApiProperty({ description: '문제 설명' })
+  @IsString()
+  instruction: string;
+
+  @ApiProperty({ description: '문제 해설' })
+  @IsString()
+  commentary: string;
+
+  @ApiProperty({ description: '문제 팝업시간' })
+  @IsString()
+  popupTime: number; // 초 단위 정수(hh:mm:ss)
+
+  @ApiProperty({ description: '선택지' })
+  @ValidateNested()
+  @Type(() => ChoiceDTO)
+  choices: ChoiceDTO[];
+}
+
 export class CreateQuizSetDTO {
   @ApiProperty({ description: '문제집 제목' })
   @IsString()
