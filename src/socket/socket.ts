@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { OnEvent } from '@nestjs/event-emitter';
 
+
 @WebSocketGateway(4000, { cors: true })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private hashTable = new Map<number, any>();
@@ -20,7 +21,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   @WebSocketServer() server: Server;
-
   @OnEvent('lectureHistory.created')
   handleLectureHistoryCreated(payload: any) {
     const memberIdNum = Number(payload.memberId);
@@ -32,10 +32,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       };
       this.hashTable.set(memberIdNum, updatedInfo);
       console.log('Hash Table Updated with Lecture History:', this.hashTable);
+  
+      const socketId = this.hashTable.get(memberIdNum).socketId;
+      if (socketId) {
+        this.server.to(socketId).emit('historyget', { lectureHistoryId: payload.lectureHistoryId });
+        //console.log('Sending lecture history ID to client:', socketId, payload.lectureHistoryId);
+      }
     } else {
-      console.log(
-        'Member ID not found in hashTable when trying to add lectureHistoryId',
-      );
+      console.log('Member ID not found in hashTable when trying to add lectureHistoryId');
     }
   }
 
@@ -61,13 +65,24 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
+  @SubscribeMessage('disconnectRequest')
+  handleDisconnectRequest(client: Socket, data: any) {
+    const memberId = Number(this.jwtService.decode(data.token)?.id);
+    const userInfo = this.hashTable.get(memberId);
+    if (userInfo && userInfo.lectureHistoryId) {
+      this.eventEmitter.emit('member.disconnect', { memberId, lectureHistoryId: userInfo.lectureHistoryId });
+    } else {
+      console.log(`No Lecture History ID found for Member ID ${memberId}`);
+    }
+  }
+
   wakeup(message: any) {
     const memberIdNum = Number(message);
     if (!this.hashTable.has(memberIdNum)) {
       throw new Error('에러발생');
     }
     const connectionInfo = this.hashTable.get(memberIdNum);
-    console.log('Sending wakeup to:', connectionInfo.socketId);
+    //console.log('Sending wakeup to:', connectionInfo.socketId);
     this.server.to(connectionInfo.socketId).emit('wakeup', 'hello');
   }
 

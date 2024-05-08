@@ -1,31 +1,36 @@
 import {
-  Body,
   Controller,
   Get,
   Param,
   Patch,
   Post,
   Query,
+  Body,
+  Injectable,
+  OnModuleInit
 } from '@nestjs/common';
-// import { UserRequest } from '../auth/UserRequest';
-// import { LectureHistoryInitRequestDto } from './dto/LectureHistoryInitRequest.dto';
-import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
-import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+
 import { LectureService } from './lecture.service';
 import { MemberService } from 'src/member/member.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
+import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
 import { SubLectureIdRetrieveResponseDto } from './dto/SubLectureIdRetrieveResponse.dto';
 import { SubLectureCreateRequestDto } from './dto/SubLectureCreateRequest.dto';
-import { OnEvent } from '@nestjs/event-emitter';
 
 @ApiTags('lectures')
 @Controller('lecture')
-export class LectureController {
+@Injectable()
+export class LectureController implements OnModuleInit {
   constructor(
     private lectureService: LectureService,
     private memberService: MemberService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
+  onModuleInit() {
+  }
   // @Post('/sub-lecture/history')
   // @ApiOperation({
   //   summary: '수강기록 초기값 생성 (= 학습 시작)',
@@ -42,6 +47,11 @@ export class LectureController {
   //   );
   // }
 
+  @OnEvent('member.disconnect')
+  handleMemberDisconnect(payload: any) {
+    console.log(`Member ID ${payload.memberId} Lecture History ID ${payload.lectureHistoryId}`);
+  }
+
   @OnEvent('member.connection')
   handleMemberConnection(payload: any) {
     return this.lectureService.initializeLectureHistory(
@@ -50,7 +60,7 @@ export class LectureController {
       payload.subLectureId,
     );
   }
-
+  
   @Patch('/sub-lecture/history/:lectureHistoryId')
   @ApiOperation({
     summary: '학습 종료 시각 기록',
