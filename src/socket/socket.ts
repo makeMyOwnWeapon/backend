@@ -70,7 +70,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const memberId = Number(this.jwtService.decode(data.token)?.id);
     const userInfo = this.hashTable.get(memberId);
     if (userInfo && userInfo.lectureHistoryId) {
-      this.eventEmitter.emit('member.disconnect', { memberId, lectureHistoryId: userInfo.lectureHistoryId });
+      this.eventEmitter.emit('member.disconnect', { endedTime: data.time, lectureHistoryId: userInfo.lectureHistoryId });
     } else {
       console.log(`No Lecture History ID found for Member ID ${memberId}`);
     }
