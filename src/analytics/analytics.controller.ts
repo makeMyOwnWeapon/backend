@@ -91,13 +91,13 @@ export class AnalyticsController {
   ) {
     try {
       const memberId = req.user.id;
-      const memberEntity =
-        await this.memberService.retrieveMemberEntity(memberId);
+      const memberEntity = await this.memberService.retrieveMemberEntity(memberId);
 
-      // 익스텐션에서 알람 울리는 로직
+      if (!this.appGateway.isConnected(memberId)) {
+        throw new Error('소켓 연결이 없습니다.');
+      }
 
       this.appGateway.wakeup(memberId);
-
       return res.status(HttpStatus.OK).json({
         message: '성공적으로 알람을 울렸습니다.',
         data: analyticsAlarmRequestDto,
@@ -106,12 +106,12 @@ export class AnalyticsController {
       console.error(error);
       return res.status(HttpStatus.BAD_REQUEST).json({
         message: '알람 울림을 실패했습니다.',
+        error: error.message,
       });
-
-      return res;
     }
   }
 
+  
   // @Get('extension')
   // async authForExtension(@Headers('Authorization') authHeader: string, @Res() res: Response): Promise<ExtensionAuthResponseDto | Response<void>> {
   //   if (!authHeader) {

@@ -76,15 +76,20 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  wakeup(message: any) {
-    const memberIdNum = Number(message);
+  wakeup(memberId: number) {
+    const memberIdNum = Number(memberId);
     if (!this.hashTable.has(memberIdNum)) {
-      throw new Error('에러발생');
+      throw new Error('소켓 연결이 없습니다.');
     }
     const connectionInfo = this.hashTable.get(memberIdNum);
-    //console.log('Sending wakeup to:', connectionInfo.socketId);
     this.server.to(connectionInfo.socketId).emit('wakeup', 'hello');
   }
+  
+  isConnected(memberId: number): boolean {
+    const connectionInfo = this.hashTable.get(memberId);
+    return !!connectionInfo && !!this.server.sockets.adapter.rooms.get(connectionInfo.socketId);
+  }
+  
 
   getLectureHistoryId(memberId: number): number | undefined {
     const memberIdNum = Number(memberId);
