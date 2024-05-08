@@ -27,13 +27,13 @@ export default class LLMService {
         {
           type: 'text',
           text: `{
-            "instruction": "다음 중 데이터 소스와 JPA 설정에 관한 내용이 맞는 선택지를 고르시오.",
+            "instruction": "(test) 다음 중 데이터 소스와 JPA 설정에 관한 내용이 맞는 선택지를 고르시오.",
             "commentary": "지문에서 데이터 소스와 JPA 설정을 하는 과정이 나와 있습니다. H2 데이터베이스를 사용하고, 메모리에서 데이터를 저장하며, JPA 설정을 했다는 내용이 있습니다.", 
             "choices": [
-              {"content": "H2 콘솔을 활성화하고 데이터 소스 설정, JPA 기본 설정을 했다.", "isAnswer": true},
-              {"content": " MariaDB를 사용하고 파일시스템에서 데이터를 저장했다.", "isAnswer": false}, 
-              {"content": " Oracle을 사용하고 네트워크상에서 데이터를 공유했다.", "isAnswer": false},
-              {"content": " MongoDB를 사용하고 클라우드에 데이터를 저장했다.","isAnswer": false}
+              {"content": "(test) H2 콘솔을 활성화하고 데이터 소스 설정, JPA 기본 설정을 했다.", "isAnswer": true},
+              {"content": "(test) MariaDB를 사용하고 파일시스템에서 데이터를 저장했다.", "isAnswer": false}, 
+              {"content": "(test) Oracle을 사용하고 네트워크상에서 데이터를 공유했다.", "isAnswer": false},
+              {"content": "(test) MongoDB를 사용하고 클라우드에 데이터를 저장했다.","isAnswer": false}
             ]
           }`,
         },
