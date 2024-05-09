@@ -5,10 +5,8 @@ import { Repository } from 'typeorm';
 import { SubLectureEntity } from '../entities/sub-lecture.entity';
 import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
 import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
-// import { LectureHistoryInitRequestDto } from './dto/LectureHistoryInitRequest.dto';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 import { MemberEntity } from 'src/entities/member.entity';
-import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
 import { SubLectureIdRetrieveResponseDto } from './dto/SubLectureIdRetrieveResponse.dto';
 import { SubLectureCreateRequestDto } from './dto/SubLectureCreateRequest.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -118,7 +116,6 @@ export class LectureService {
 
   async finalizeLectureHistory(
     lectureHistoryId: number,
-    dto: LectureHistorySaveRequestDto,
   ): Promise<LectureHistoryResponseDto> {
     const lectureHistory = await this.lectureHistoryRepository.findOne({
       where: { id: lectureHistoryId },
@@ -126,7 +123,7 @@ export class LectureService {
     if (!lectureHistory) {
       throw new NotFoundException('수강기록이 존재하지 않음');
     }
-    lectureHistory.endedAt = dto.endedAt;
+    lectureHistory.endedAt = new Date();
     return {
       lectureHistoryId: (
         await this.lectureHistoryRepository.save(lectureHistory)

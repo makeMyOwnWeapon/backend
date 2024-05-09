@@ -1,56 +1,25 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-  Body,
-  Injectable,
-  OnModuleInit,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { Controller, Get, Param, Post, Query, Body } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { OnEvent } from '@nestjs/event-emitter';
 
 import { LectureService } from './lecture.service';
 import { MemberService } from 'src/member/member.service';
-import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
-import { LectureHistorySaveRequestDto } from './dto/LectureHistorySaveRequest.dto';
 import { SubLectureIdRetrieveResponseDto } from './dto/SubLectureIdRetrieveResponse.dto';
 import { SubLectureCreateRequestDto } from './dto/SubLectureCreateRequest.dto';
 
 @ApiTags('lectures')
 @Controller('lecture')
-@Injectable()
-export class LectureController implements OnModuleInit {
+export class LectureController {
   constructor(
     private lectureService: LectureService,
     private memberService: MemberService,
-    private eventEmitter: EventEmitter2,
   ) {}
 
   onModuleInit() {}
-  // @Post('/sub-lecture/history')
-  // @ApiOperation({
-  //   summary: '수강기록 초기값 생성 (= 학습 시작)',
-  //   description: '수강기록 초기값 생성 (= 학습 시작)',
-  // })
-  // initHistory(
-  //   @Req() req: UserRequest,
-  //   @Body() dto: LectureHistoryInitRequestDto,
-  // ): Promise<LectureHistoryResponseDto> {
-  //   const memberId = req.user.id;
-  //   return this.lectureService.initializeLectureHistory(
-  //     dto,
-  //     this.memberService.retrieveMemberEntity(memberId),
-  //   );
-  // }
 
   @OnEvent('member.disconnect')
   handleMemberDisconnect(payload: any) {
-    console.log(
-      `lectureHistoryId ${payload.lectureHistoryId}`,
-    );
+    return this.lectureService.finalizeLectureHistory(payload.lectureHistoryId);
   }
 
   @OnEvent('member.connection')
@@ -59,18 +28,6 @@ export class LectureController implements OnModuleInit {
       this.memberService.retrieveMemberEntity(payload.memberId),
       payload.subLectureId,
     );
-  }
-
-  @Patch('/sub-lecture/history/:lectureHistoryId')
-  @ApiOperation({
-    summary: '학습 종료 시각 기록',
-    description: '학습 종료 시각 기록',
-  })
-  saveHistory(
-    @Param('lectureHistoryId') lectureHistoryId: number,
-    @Body() dto: LectureHistorySaveRequestDto,
-  ): Promise<LectureHistoryResponseDto> {
-    return this.lectureService.finalizeLectureHistory(lectureHistoryId, dto);
   }
 
   @Get('/sub-lecture')
