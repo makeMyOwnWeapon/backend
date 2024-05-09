@@ -23,12 +23,13 @@ export class HistoryController {
   async readHistories(
     @Req() req: UserRequest,
     @Query('subLectureId') subLectureId: number,
+    @Query('lectureHistoryId') lectureHistoryId: number,
   ): Promise<ReadHistoryReportDTO | ReadHistoriesDTO[]> {
     const memberId = req.user.id;
     if (subLectureId) {
       const quizzes = await this.quizService.retrieveQuizEntity(subLectureId);
       return await this.historyService.readHistoryReport(
-        subLectureId,
+        lectureHistoryId,
         memberId,
         quizzes,
       );
