@@ -114,7 +114,6 @@ create table if not exists quiz_results
     created_at           datetime(6) default CURRENT_TIMESTAMP(6) not null,
     is_correct           tinyint                                  not null,
     solved_duration      int                                      not null,
-    member_id            int                                      null,
     quiz_id              int                                      null,
     choice_id            int                                      null,
     lecture_histories_id int                                      null,
@@ -126,8 +125,6 @@ create table if not exists quiz_results
         foreign key (quiz_id) references quizzes (id),
     constraint FK_f0e98e2c158a25252720f8857ac
         foreign key (lecture_histories_id) references lecture_histories (id),
-    constraint FK_f0eca15abce4c50e3fd4245820f
-        foreign key (member_id) references members (id)
 );
 
 create table if not exists recommendations
@@ -151,15 +148,9 @@ create table if not exists video_analytics_histories
     started_at           datetime                                 not null,
     ended_at             datetime                                 not null,
     analysis_type        int                                      not null,
-    member_id            int                                      null,
-    sub_lecture_id       int                                      null,
     lecture_histories_id int                                      null,
     constraint FK_bd290f022bbb7eec808ebbd646a
-        foreign key (lecture_histories_id) references lecture_histories (id),
-    constraint FK_d4c996351c871d3b9bdf6658166
-        foreign key (sub_lecture_id) references sub_lectures (id),
-    constraint FK_fa9c309784baf7ea3f8381a230c
-        foreign key (member_id) references members (id)
+        foreign key (lecture_histories_id) references lecture_histories (id)
 );
 
 
