@@ -48,6 +48,7 @@ export class HistoryService {
 
       // 레포트 목록을 반환합니다.
       return histories.map((history) => ({
+        lectureHistoryId: history.id,
         subLectureId: history.subLecture.id,
         subLectureTitle: history.subLecture.title,
         subLectureUrl: history.subLecture.url,
@@ -60,28 +61,32 @@ export class HistoryService {
   }
 
   async readHistoryReport(
-    subLectureId: number,
+    lectureHistoryId: number,
     memberId: number,
     quizzes: QuizEntity[],
   ): Promise<ReadHistoryReportDTO> {
     try {
+      console.log('subLectureId: ', lectureHistoryId);
+      console.log('memberId: ', memberId);
+      console.log('quizzes: ', quizzes);
       // 강의 시작 및 종료 시간 가져오기
       const lectureHistory = await this.lectureHistoryRepository.findOne({
-        where: { subLecture: { id: subLectureId }, member: { id: memberId } },
+        where: { id: lectureHistoryId },
       });
-
+      console.log('lectureHistory endedAt: ', lectureHistory.endedAt);
+      console.log('lectureHistory: ', lectureHistory);
       // 졸음 및 자리이탈 이력 가져오기
       const videoAnalyticsHistories =
         await this.videoAnalyticsHistoryRepository.find({
           where: { lectureHistories: { id: lectureHistory.id } },
         });
-
+      console.log('videoAnalyticsHistories: ', videoAnalyticsHistories);
       // 퀴즈 결과 가져오기
       const quizResults = await this.quizResultRepository.find({
         where: { lectureHistories: { id: lectureHistory.id } },
         relations: ['quiz', 'choice'],
       });
-
+      console.log('quizResults: ', quizResults);
       // 졸음 및 자리이탈 이력, 퀴즈 결과, 선택지 등을 조합하여 반환
       return {
         studyStartTime: lectureHistory.startedAt,
@@ -99,6 +104,8 @@ export class HistoryService {
             (result) => result.quiz.id === quiz.id,
           );
           const choice = result ? result.choice : null;
+          console.log('choice: ', choice);
+          console.log('result: ', result);
           return {
             question: quiz.instruction,
             commentary: quiz.commentary,

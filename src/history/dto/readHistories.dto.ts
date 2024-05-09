@@ -2,6 +2,9 @@ import { IsString, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ReadHistoriesDTO {
+  @ApiProperty({ description: 'lectureHistoryId' })
+  @IsInt()
+  lectureHistoryId: number;
   @ApiProperty({ description: 'subLectureId' })
   @IsInt()
   subLectureId: number;
