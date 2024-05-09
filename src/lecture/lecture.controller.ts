@@ -49,7 +49,7 @@ export class LectureController implements OnModuleInit {
   @OnEvent('member.disconnect')
   handleMemberDisconnect(payload: any) {
     console.log(
-      `endedTime  ${payload.endedTime} lectureHistoryId ${payload.lectureHistoryId}`,
+      `lectureHistoryId ${payload.lectureHistoryId}`,
     );
   }
 
