@@ -340,7 +340,13 @@ export class QuizService {
       }),
     );
 
-    return allQuizSet;
+    // recommendationCount를 기준으로 내림차순 정렬
+    allQuizSet.sort((a, b) => b.recommendationCount - a.recommendationCount);
+
+    // 상위 4개의 요소만 선택
+    const topFourQuizSets = allQuizSet.slice(0, 4);
+
+    return topFourQuizSets;
   }
 
   /**
