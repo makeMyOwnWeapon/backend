@@ -55,6 +55,7 @@ export class QuizController {
     );
   }
 
+  
   @Get('/')
   @ApiOperation({
     summary: '특정강의의 문제집 조회',
@@ -68,6 +69,18 @@ export class QuizController {
     }
   }
 
+  @Get('/:quizSetId/can-delete')
+  @ApiOperation({
+    summary: '특정 회원의 문제집 접근 권한 검사',
+  })
+  async checkQuizSetAccess(
+    @Req() req: UserRequest,
+    @Param('quizSetId') quizSetId: number,
+  ): Promise<{ access: boolean }> {
+    const hasAccess = await this.quizService.checkAccess(req.user.id, quizSetId);
+    return { access: hasAccess };
+  }
+  
   @Get('/:quizsetId/quizzes')
   @ApiOperation({
     summary: '문제집의 문제조회',

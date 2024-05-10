@@ -229,6 +229,18 @@ export class QuizService {
     return newQuizzes.id;
   }
 
+  async checkAccess(memberId: number, quizSetId: number): Promise<boolean> {
+    try {
+      const quizSet = await this.quizSetRepository.findOne({
+        where: { id: quizSetId, member: { id: memberId } },
+      });
+      return !!quizSet;
+    } catch (error) {
+      console.error('Access check failed:', error);
+      return false;
+    }
+  }
+
   async insertChoices(choices, quizzesId): Promise<number> {
     const quizzes = await this.quizRepository.findOne({
       where: { id: quizzesId },
