@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   Post,
@@ -9,7 +8,12 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import * as process from 'process';
 import { Public } from 'src/auth/auth.guard';
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
+
+export class AnalysisResultType {
+  isBlank: boolean;
+  isSleep: boolean;
+}
 
 @Controller()
 export class AppController {
@@ -25,23 +29,32 @@ export class AppController {
   async analyzeVideo(@UploadedFile() file: Express.Multer.File) {
     console.log('client file: ', file);
     const result = await this.executePyFile(file.buffer.toString('base64'));
-    return { message: 'upload success', result: result };
+    return { result: result };
   }
 
-  executePyFile(base64ImageData: string): Promise<string> {
+  executePyFile(base64ImageData: string): Promise<AnalysisResultType> {
     return new Promise((resolve, reject) => {
-      exec(
-        `python3 ./mediapipe.py ${base64ImageData}`,
-        (error, stdout, stderr) => {
-          if (error) {
-            console.error(`exec error: ${error}`);
-            return reject(error);
-          }
-          console.log(`stdout: ${stdout}`);
-          console.error(`stderr: ${stderr}`);
-          resolve(stdout);
-        },
-      );
+      const pythonProcess = spawn('python3', ['./mediapipe.py']);
+      let dataString = '';
+      pythonProcess.stdout.on('data', (data) => {
+        dataString += data.toString();
+      });
+      pythonProcess.stderr.on('data', (data) => {
+        console.error(`stderr: ${data.toString()}`);
+      });
+      pythonProcess.on('error', (error) => {
+        reject(error);
+      });
+      pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+          reject(new Error(`Python process exited with code ${code}`));
+        } else {
+          resolve(JSON.parse(dataString));
+        }
+      });
+      // 데이터 전송
+      pythonProcess.stdin.write(base64ImageData);
+      pythonProcess.stdin.end();
     });
   }
 }
