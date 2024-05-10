@@ -1,4 +1,13 @@
-import { Body, Controller, Post, Get, Param, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Param,
+  Query,
+  Req,
+  Delete,
+} from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizSetDTO, NoTimeConvertingQuizDTO } from './dto/quiz.dto';
 import { RecommendationDTO } from './dto/quiz_sets.dto';
@@ -75,6 +84,14 @@ export class QuizController {
       isSeeAnswer,
     );
   }
+  @Delete('/:quizsetId/quizzes')
+  @ApiOperation({
+    summary: '문제집의 문제삭제',
+  })
+  async quizDelete(@Param('quizsetId') quizsetId: number) {
+    return this.quizService.deleteQuizSet(quizsetId);
+  }
+
   @Post('/recommendation')
   @ApiOperation({
     summary: '추천수 반영',

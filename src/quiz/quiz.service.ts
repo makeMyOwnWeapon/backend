@@ -275,6 +275,67 @@ export class QuizService {
     return allQuizSet;
   }
 
+  async deleteQuizSet(quizSetId: number): Promise<void> {
+    // 주어진 ID에 해당하는 문제집을 찾음
+    const quizSet = await this.quizSetRepository.findOne({
+      where: { id: quizSetId },
+      relations: [
+        'subLecture',
+        'quizzes',
+        'quizzes.quizResults',
+        'quizzes.choices',
+        'recommendations',
+      ],
+    });
+
+    if (!quizSet) {
+      throw new NotFoundException('QuizSet not found');
+    }
+
+    await Promise.all([
+      // choices 삭제
+      quizSet.quizzes &&
+        Promise.all(
+          quizSet.quizzes.map(
+            (quiz) =>
+              quiz.choices &&
+              Promise.all(
+                quiz.choices.map((choice) =>
+                  this.choiceRepository.remove(choice),
+                ),
+              ),
+          ),
+        ),
+      // quizResults 삭제
+      quizSet.quizzes &&
+        Promise.all(
+          quizSet.quizzes.map(
+            (quiz) =>
+              quiz.quizResults &&
+              Promise.all(
+                quiz.quizResults.map((quizResult) =>
+                  this.quizResultRepository.remove(quizResult),
+                ),
+              ),
+          ),
+        ),
+      // quiz 삭제
+      quizSet.quizzes &&
+        Promise.all(
+          quizSet.quizzes.map((quiz) => this.quizRepository.remove(quiz)),
+        ),
+      // recommendations 삭제
+      quizSet.recommendations &&
+        Promise.all(
+          quizSet.recommendations.map((recommendation) =>
+            this.recommendationRepository.remove(recommendation),
+          ),
+        ),
+      // QuizSetEntity 삭제
+      this.quizSetRepository.remove(quizSet),
+    ]);
+  }
+
   async readQuizDetails(
     quizSetId: number,
     isSeeCommentary: boolean,
