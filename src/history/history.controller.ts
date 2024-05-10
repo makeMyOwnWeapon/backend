@@ -41,23 +41,16 @@ export class HistoryController {
   @Public()
   @Get('/extension')
   @ApiOperation({
-    summary: '회원레포트 익스텐션에서 목록/상세 조회',
+    summary: '회원레포트 익스텐션에서 상세 조회',
   })
   async readHistoriesInExtension(
-    @Req() req: UserRequest,
     @Query('subLectureId') subLectureId: number,
     @Query('lectureHistoryId') lectureHistoryId: number,
   ): Promise<ReadHistoryReportDTO | ReadHistoriesDTO[]> {
-    const memberId = req.user.id;
-    if (subLectureId) {
-      const quizzes = await this.quizService.retrieveQuizEntity(subLectureId);
-      return await this.historyService.readHistoryReport(
-        lectureHistoryId,
-        memberId,
-        quizzes,
-      );
-    } else {
-      return await this.historyService.readHistories(memberId);
-    }
+    const quizzes = await this.quizService.retrieveQuizEntity(subLectureId);
+    return await this.historyService.readHistoryReportExtension(
+      lectureHistoryId,
+      quizzes,
+    );
   }
 }
