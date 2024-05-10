@@ -55,7 +55,6 @@ export class QuizController {
     );
   }
 
-  
   @Get('/')
   @ApiOperation({
     summary: '특정강의의 문제집 조회',
@@ -77,10 +76,13 @@ export class QuizController {
     @Req() req: UserRequest,
     @Param('quizSetId') quizSetId: number,
   ): Promise<{ access: boolean }> {
-    const hasAccess = await this.quizService.checkAccess(req.user.id, quizSetId);
+    const hasAccess = await this.quizService.checkAccess(
+      req.user.id,
+      quizSetId,
+    );
     return { access: hasAccess };
   }
-  
+
   @Get('/:quizsetId/quizzes')
   @ApiOperation({
     summary: '문제집의 문제조회',

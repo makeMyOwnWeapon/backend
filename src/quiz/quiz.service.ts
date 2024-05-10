@@ -305,19 +305,6 @@ export class QuizService {
     }
 
     await Promise.all([
-      // choices 삭제
-      quizSet.quizzes &&
-        Promise.all(
-          quizSet.quizzes.map(
-            (quiz) =>
-              quiz.choices &&
-              Promise.all(
-                quiz.choices.map((choice) =>
-                  this.choiceRepository.remove(choice),
-                ),
-              ),
-          ),
-        ),
       // quizResults 삭제
       quizSet.quizzes &&
         Promise.all(
@@ -327,6 +314,19 @@ export class QuizService {
               Promise.all(
                 quiz.quizResults.map((quizResult) =>
                   this.quizResultRepository.remove(quizResult),
+                ),
+              ),
+          ),
+        ),
+      // choices 삭제
+      quizSet.quizzes &&
+        Promise.all(
+          quizSet.quizzes.map(
+            (quiz) =>
+              quiz.choices &&
+              Promise.all(
+                quiz.choices.map((choice) =>
+                  this.choiceRepository.remove(choice),
                 ),
               ),
           ),
@@ -346,6 +346,8 @@ export class QuizService {
       // QuizSetEntity 삭제
       this.quizSetRepository.remove(quizSet),
     ]);
+
+    console.log('삭제되었습니다');
   }
 
   async readQuizDetails(
