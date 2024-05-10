@@ -34,7 +34,7 @@ export class AppController {
 
   executePyFile(base64ImageData: string): Promise<AnalysisResultType> {
     return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python3', ['./mediapipe.py']);
+      const pythonProcess = spawn('python3', ['./mediapipe_analysis.py']);
       let dataString = '';
       pythonProcess.stdout.on('data', (data) => {
         dataString += data.toString();
