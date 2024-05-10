@@ -51,7 +51,7 @@ def checkImage(base64_string):
         isExist = False
     
     result = {
-        "isExit" : isExist,
+        "isExist" : isExist,
         "isEyeClosed" : isEyeClosed
     }
 
