@@ -17,18 +17,19 @@ export class LectureController {
 
   onModuleInit() {}
 
-  @OnEvent('member.disconnect')
-  handleMemberDisconnect(payload: any) {
-    return this.lectureService.finalizeLectureHistory(payload.lectureHistoryId);
-  }
+  // @OnEvent('member.disconnect')
+  // handleMemberDisconnect(payload: any) {
+  //   return this.lectureService.finalizeLectureHistory(payload.lectureHistoryId);
+  // }
+  //pppppppppppppppppppppppppppppppppppp
 
-  @OnEvent('member.connection')
-  handleMemberConnection(payload: any) {
-    return this.lectureService.initializeLectureHistory(
-      this.memberService.retrieveMemberEntity(payload.memberId),
-      payload.subLectureId,
-    );
-  }
+  // @OnEvent('member.connection')
+  // handleMemberConnection(payload: any) {
+  //   return this.lectureService.initializeLectureHistory(
+  //     this.memberService.retrieveMemberEntity(payload.memberId),
+  //     payload.subLectureId,
+  //   );
+  // }
 
   @Get('/sub-lecture')
   retrieveLecture(
