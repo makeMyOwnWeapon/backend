@@ -51,22 +51,22 @@ export class AnalyticsController {
   ) {
     try {
       const memberId = req.user.id;
-      const lectureHistoryId = this.appGateway.getLectureHistoryId(memberId);
-
-      if (!lectureHistoryId) {
-        return res.status(HttpStatus.NOT_FOUND).json({
-          message: '수강 기록을 찾을 수 없습니다.',
-        });
-      }
-      const lectureHistoryEntity =
-        await this.historyService.retrieveLectureHistoryEntity(
-          lectureHistoryId,
-        );
-      const videoAnalyticsHistoryEntity =
-        analyticsSaveRequestDto.toEntity(lectureHistoryEntity);
-      await this.analyticsService.saveVideoAnalyticsHistory(
-        videoAnalyticsHistoryEntity,
-      );
+      //const lectureHistoryId = this.appGateway.getLectureHistoryId(memberId);
+      //pppppppppppppppppppppppppppppppppppp
+      // if (!lectureHistoryId) {
+      //   return res.status(HttpStatus.NOT_FOUND).json({
+      //     message: '수강 기록을 찾을 수 없습니다.',
+      //   });
+      // }
+      // const lectureHistoryEntity =
+      //   await this.historyService.retrieveLectureHistoryEntity(
+      //     lectureHistoryId,
+      //   );
+      // const videoAnalyticsHistoryEntity =
+      //   analyticsSaveRequestDto.toEntity(lectureHistoryEntity);
+      // await this.analyticsService.saveVideoAnalyticsHistory(
+      //   videoAnalyticsHistoryEntity,
+      // );
 
       return res.status(HttpStatus.OK).json({
         message: '데이터가 성공적으로 처리되었습니다.',
@@ -94,15 +94,12 @@ export class AnalyticsController {
       const memberEntity =
         await this.memberService.retrieveMemberEntity(memberId);
 
-      if (!this.appGateway.isConnected(memberId)) {
-        throw new Error('소켓 연결이 없습니다.');
-      }
+      // if (!this.appGateway.isConnected(memberId)) {
+      //   throw new Error('소켓 연결이 없습니다.');
+      // }
 
-      this.appGateway.wakeup(memberId);
-      return res.status(HttpStatus.OK).json({
-        message: '성공적으로 알람을 울렸습니다.',
-        data: analyticsAlarmRequestDto,
-      });
+      //todo: HTTP로 꺠우는 로직 추가
+      
     } catch (error) {
       console.error(error);
       return res.status(HttpStatus.BAD_REQUEST).json({
