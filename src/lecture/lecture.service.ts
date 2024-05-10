@@ -105,12 +105,12 @@ export class LectureService {
     const savedLectureHistory =
       await this.lectureHistoryRepository.save(lectureHistory);
 
-    this.eventEmitter.emit('lectureHistory.created', {
-      memberId: (await member).id,
-      lectureHistoryId: savedLectureHistory.id,
-      subLectureId: subLectureId,
-    });
-
+    // this.eventEmitter.emit('lectureHistory.created', {
+    //   memberId: (await member).id,
+    //   lectureHistoryId: savedLectureHistory.id,
+    //   subLectureId: subLectureId,
+    // });
+    //pppppppppppppppppppppppppppppppppppp
     return { lectureHistoryId: savedLectureHistory.id };
   }
 
