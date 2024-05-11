@@ -9,6 +9,7 @@ import { HistoryController } from './history.controller';
 import { LectureModule } from '../lecture/lecture.module';
 import { MemberModule } from 'src/member/member.module';
 import { QuizModule } from 'src/quiz/quiz.module';
+import { LLMModule } from 'src/llm/llm.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { QuizModule } from 'src/quiz/quiz.module';
     forwardRef(() => QuizModule),
     MemberModule,
     LectureModule,
+    LLMModule,
   ],
   providers: [HistoryService],
   controllers: [HistoryController],
