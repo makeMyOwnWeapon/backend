@@ -1,11 +1,14 @@
-import { Controller, Get, Param, Post, Query, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Body, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { OnEvent } from '@nestjs/event-emitter';
+// import { OnEvent } from '@nestjs/event-emitter';
+//ppppppppppppppppp
 
 import { LectureService } from './lecture.service';
 import { MemberService } from 'src/member/member.service';
 import { SubLectureIdRetrieveResponseDto } from './dto/SubLectureIdRetrieveResponse.dto';
 import { SubLectureCreateRequestDto } from './dto/SubLectureCreateRequest.dto';
+import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
+import { UserRequest } from '../auth/UserRequest';
 
 @ApiTags('lectures')
 @Controller('lecture')
@@ -36,6 +39,17 @@ export class LectureController {
     @Query('url') url: string,
   ): Promise<SubLectureIdRetrieveResponseDto> {
     return this.lectureService.retrieveSubLectureId(decodeURIComponent(url));
+  }
+
+  @Get('/sub-lecture/history')
+  retrieveHistory(
+    @Req() req: UserRequest,
+    @Body() dto: SubLectureIdRetrieveResponseDto,
+  ): Promise<LectureHistoryResponseDto> {
+    return this.lectureService.initializeLectureHistory(
+      this.memberService.retrieveMemberEntity(req.user.id),
+      dto.subLectureId,
+    );
   }
 
   @Post('/main-lecture/:mainLectureTitle/sub-lecture')
