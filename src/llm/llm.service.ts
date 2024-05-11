@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Anthropic from '@anthropic-ai/sdk';
 import { AIQuizCreateResponseDTO } from 'src/quiz/dto/ai-quiz-create.dto';
-import { QUIZ_MAKER_TEMPLATE } from './template';
+import { APPQUESTION_MAKER_TEMPLATE, QUIZ_MAKER_TEMPLATE, Question_Analyze_MAKER_TEMPLATE } from './template';
 
 @Injectable()
 export default class LLMService {
@@ -86,4 +86,17 @@ export default class LLMService {
       this.createClaudeCompletion(QUIZ_MAKER_TEMPLATE, script),
     );
   }
+
+  async generateSummary(script: string): Promise<AIQuizCreateResponseDTO> {
+    return this.getResponseContentJson(
+      this.createClaudeCompletion(Question_Analyze_MAKER_TEMPLATE, script),
+    );
+  }
+
+  async generateAppQuestion(script: string): Promise<AIQuizCreateResponseDTO> {
+    return this.getResponseContentJson(
+      this.createClaudeCompletion(APPQUESTION_MAKER_TEMPLATE, script),
+    );
+  }
+
 }

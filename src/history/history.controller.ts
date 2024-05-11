@@ -57,4 +57,15 @@ export class HistoryController {
       quizzes,
     );
   }
+
+
+  // @Get('/gpt')
+  // @ApiOperation({
+
+  // })
+  // async gpt(): 
+
+
+
+
 }
