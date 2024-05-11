@@ -7,7 +7,7 @@ import mediapipe_analysis
 
 app = FastAPI()
 
-@app.post("/file")
+@app.post("/api/image-process/image")
 async def create_file(file: UploadFile):
     image_data = await file.read()
     # 읽은 이미지 데이터를 base64로 인코딩합니다.
