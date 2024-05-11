@@ -33,9 +33,9 @@ export class HistoryService {
       where: { lectureHistories: { id: lectureHistoryId } },
       relations: ['quiz'],
     });
-    if (!quizResultEntity) {
-      throw new NotFoundException('quizResultEntity not found');
-    }
+    // if (!quizResultEntity) {
+    //   throw new NotFoundException('quizResultEntity not found');
+    // }
     return quizResultEntity;
   }
 

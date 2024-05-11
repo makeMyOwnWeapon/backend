@@ -74,13 +74,13 @@ export class QuizService {
   ): Promise<QuizEntity[]> {
     // 문제와 해당 문제에 대한 선택지, 정답 여부, 해설 가져오기
     const quiz = quizResult.quiz; // 퀴즈 결과에 대한 퀴즈 엔티티 가져오기
-    if (!quiz) {
-      throw new NotFoundException('quiz not found');
-    }
+    // if (!quiz) {
+    //   throw new NotFoundException('quiz not found');
+    // }
     const choices = await this.choiceRepository.find({ where: { quiz: quiz } }); // 퀴즈에 관련된 선택지 찾기
-    if (!choices) {
-      throw new NotFoundException('choices not found');
-    }
+    // if (!choices) {
+    //   throw new NotFoundException('choices not found');
+    // }
     quiz.choices = choices; // 퀴즈에 선택지 할당
     return [quiz]; // 퀴즈 엔티티 배열로 반환
   }
