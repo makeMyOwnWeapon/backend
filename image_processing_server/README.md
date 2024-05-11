@@ -8,5 +8,5 @@ pip install -r requirements.txt
 
 ## 서버 실행 (기본 포트번호: 8000)
 ```shell
-uvicorn main:app --reload
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
