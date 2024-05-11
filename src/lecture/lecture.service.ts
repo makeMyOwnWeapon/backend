@@ -114,9 +114,7 @@ export class LectureService {
     return { lectureHistoryId: savedLectureHistory.id };
   }
 
-  async finalizeLectureHistory(
-    lectureHistoryId: number,
-  ): Promise<LectureHistoryResponseDto> {
+  async finalizeLectureHistory(lectureHistoryId: number) {
     const lectureHistory = await this.lectureHistoryRepository.findOne({
       where: { id: lectureHistoryId },
     });

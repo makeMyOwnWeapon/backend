@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Post, Query, Body, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Body,
+  Req,
+  Patch,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 // import { OnEvent } from '@nestjs/event-emitter';
 //ppppppppppppppppp
@@ -42,7 +51,7 @@ export class LectureController {
   }
 
   @Post('/sub-lecture/history')
-  retrieveHistory(
+  connectHistory(
     @Req() req: UserRequest,
     @Body() dto: SubLectureIdRetrieveResponseDto,
   ): Promise<LectureHistoryResponseDto> {
@@ -50,6 +59,18 @@ export class LectureController {
       this.memberService.retrieveMemberEntity(req.user.id),
       dto.subLectureId,
     );
+  }
+
+  @Patch('sub-lecture/history')
+  async disconnectHistory(
+    @Req() req: UserRequest,
+    @Body() dto: LectureHistoryResponseDto,
+  ) {
+    const aa = await this.lectureService.finalizeLectureHistory(
+      dto.lectureHistoryId,
+    );
+    console.log('aa:', aa);
+    return aa;
   }
 
   @Post('/main-lecture/:mainLectureTitle/sub-lecture')
