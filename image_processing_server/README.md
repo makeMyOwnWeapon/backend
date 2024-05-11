@@ -10,3 +10,8 @@ pip install -r requirements.txt
 ```shell
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
+
+## 개발 서버 실행
+```shell
+uvicorn main:app --reload
+```
