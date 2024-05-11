@@ -5,7 +5,6 @@ import { Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { IoAdapter } from '@nestjs/platform-socket.io';
 
 dotenv.config({
   path: path.resolve(
@@ -24,7 +23,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   const sqlLogger = new Logger('SQL');
   app.useLogger(sqlLogger);
-  app.useWebSocketAdapter(new IoAdapter(app));
 
   const config = new DocumentBuilder()
     .setTitle('LOA-api')

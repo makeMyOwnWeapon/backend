@@ -13,7 +13,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { APP_GUARD } from '@nestjs/core';
 import { MemberAuthGuard } from 'src/auth/auth.guard';
-import { AppGateway } from './socket/socket';
 import { LLMModule } from './llm/llm.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
@@ -48,9 +47,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       provide: APP_GUARD,
       useClass: MemberAuthGuard,
     },
-    AppGateway,
   ],
-  exports: [AppGateway],
 })
 export class AppModule {
   constructor(private datasource: DataSource) {}
