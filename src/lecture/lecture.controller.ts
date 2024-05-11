@@ -9,8 +9,6 @@ import {
   Patch,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-// import { OnEvent } from '@nestjs/event-emitter';
-//ppppppppppppppppp
 
 import { LectureService } from './lecture.service';
 import { MemberService } from 'src/member/member.service';
@@ -28,20 +26,6 @@ export class LectureController {
   ) {}
 
   onModuleInit() {}
-
-  // @OnEvent('member.disconnect')
-  // handleMemberDisconnect(payload: any) {
-  //   return this.lectureService.finalizeLectureHistory(payload.lectureHistoryId);
-  // }
-  //pppppppppppppppppppppppppppppppppppp
-
-  // @OnEvent('member.connection')
-  // handleMemberConnection(payload: any) {
-  //   return this.lectureService.initializeLectureHistory(
-  //     this.memberService.retrieveMemberEntity(payload.memberId),
-  //     payload.subLectureId,
-  //   );
-  // }
 
   @Get('/sub-lecture')
   retrieveLecture(
@@ -66,11 +50,10 @@ export class LectureController {
     @Req() req: UserRequest,
     @Body() dto: LectureHistoryResponseDto,
   ) {
-    const aa = await this.lectureService.finalizeLectureHistory(
+    const leactureHistoryId = await this.lectureService.finalizeLectureHistory(
       dto.lectureHistoryId,
     );
-    console.log('aa:', aa);
-    return aa;
+    return leactureHistoryId;
   }
 
   @Post('/main-lecture/:mainLectureTitle/sub-lecture')

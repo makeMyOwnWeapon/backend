@@ -4,7 +4,6 @@ import { MainLectureEntity } from '../entities/main-lecture.entity';
 import { Repository } from 'typeorm';
 import { SubLectureEntity } from '../entities/sub-lecture.entity';
 import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
-import { LectureHistoryResponseDto } from './dto/LectureHistoryResponse.dto';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 import { MemberEntity } from 'src/entities/member.entity';
 import { SubLectureIdRetrieveResponseDto } from './dto/SubLectureIdRetrieveResponse.dto';
@@ -105,12 +104,6 @@ export class LectureService {
     const savedLectureHistory =
       await this.lectureHistoryRepository.save(lectureHistory);
 
-    // this.eventEmitter.emit('lectureHistory.created', {
-    //   memberId: (await member).id,
-    //   lectureHistoryId: savedLectureHistory.id,
-    //   subLectureId: subLectureId,
-    // });
-    //pppppppppppppppppppppppppppppppppppp
     return { lectureHistoryId: savedLectureHistory.id };
   }
 
