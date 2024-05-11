@@ -26,7 +26,9 @@ export class AnalyticsService {
 
   executePyFile(base64ImageData: string): Promise<AnalyticsResultResponseDto> {
     return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python3.11', ['./mediapipe_analysis.py']);
+      const pythonProcess = spawn('python3.11', [
+        './image_processing_server/mediapipe_analysis.py',
+      ]);
       let dataString = '';
       pythonProcess.stdout.on('data', (data) => {
         dataString += data.toString();

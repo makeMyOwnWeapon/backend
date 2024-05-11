@@ -6,7 +6,7 @@ import base64
 import numpy as np
 import json
 import sys
-
+import os
 
 def base64ToImage(base64_string):
     # Base64 문자열을 바이트 배열로 디코딩
@@ -22,8 +22,10 @@ def base64ToImage(base64_string):
     return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 def checkImage(base64_string):
+    current_file_path = os.path.abspath(__file__)
+    current_dir_path = os.path.dirname(current_file_path)
     # STEP 2: Create an FaceLandmarker object.
-    base_options = python.BaseOptions(model_asset_path='./face_landmarker_v2_with_blendshapes.task')
+    base_options = python.BaseOptions(model_asset_path=f'{current_dir_path}/face_landmarker_v2_with_blendshapes.task')
     options = vision.FaceLandmarkerOptions(base_options=base_options,
                                         output_face_blendshapes=True,
                                         output_facial_transformation_matrixes=True,
@@ -38,7 +40,6 @@ def checkImage(base64_string):
 
     # STEP 5: Detect face landmarks from the input image.
     detection_result = detector.detect(image)
-
 
     isExist = True
     isEyeClosed = False
@@ -59,6 +60,5 @@ def checkImage(base64_string):
 
 if __name__ == "__main__":
     base64_image_data = sys.stdin.read() # Node.js에서 받아온 데이터
-    # print(json.dumps({"key" : "value"}))
     result = checkImage(base64_image_data)
     print(result)
