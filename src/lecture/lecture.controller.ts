@@ -41,7 +41,7 @@ export class LectureController {
     return this.lectureService.retrieveSubLectureId(decodeURIComponent(url));
   }
 
-  @Post('/sub-lecture/history')
+  @Get('/sub-lecture/history')
   retrieveHistory(
     @Req() req: UserRequest,
     @Body() dto: SubLectureIdRetrieveResponseDto,
