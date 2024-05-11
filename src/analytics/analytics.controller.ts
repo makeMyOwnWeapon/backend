@@ -18,7 +18,6 @@ import { AnalyticsService } from '../analytics/analytics.service';
 import { UserRequest } from '../auth/UserRequest';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
-import { AppGateway } from 'src/socket/socket';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import { Public } from 'src/auth/auth.guard';
 import { AnalyticsResultResponseDto } from './dto/AnalyticsResultResponse.dto';
@@ -31,7 +30,6 @@ export class AnalyticsController {
     private memberService: MemberService,
     private analyticsService: AnalyticsService,
     private historyService: HistoryService,
-    private appGateway: AppGateway,
   ) {}
 
   @Get()
@@ -96,13 +94,7 @@ export class AnalyticsController {
       const memberId = req.user.id;
       const memberEntity =
         await this.memberService.retrieveMemberEntity(memberId);
-
-      // if (!this.appGateway.isConnected(memberId)) {
-      //   throw new Error('소켓 연결이 없습니다.');
-      // }
-
       //todo: HTTP로 꺠우는 로직 추가
-      
     } catch (error) {
       console.error(error);
       return res.status(HttpStatus.BAD_REQUEST).json({
