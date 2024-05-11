@@ -1,5 +1,3 @@
-// @ts-ignore
-
 import {
   Body,
   Controller,
@@ -8,6 +6,8 @@ import {
   Post,
   Res,
   Req,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AnalyticsSaveRequestDto } from './dto/AnalyticsSaveRequest.dto';
@@ -19,6 +19,9 @@ import { UserRequest } from '../auth/UserRequest';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { AppGateway } from 'src/socket/socket';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
+import { Public } from 'src/auth/auth.guard';
+import { AnalyticsResultResponseDto } from './dto/AnalyticsResultResponse.dto';
 
 @ApiTags('analytics')
 @Controller('analytics')
@@ -109,18 +112,13 @@ export class AnalyticsController {
     }
   }
 
-  // @Get('extension')
-  // async authForExtension(@Headers('Authorization') authHeader: string, @Res() res: Response): Promise<ExtensionAuthResponseDto | Response<void>> {
-  //   if (!authHeader) {
-  //     return res.status(HttpStatus.BAD_REQUEST).send();
-  //   }
-  //   const signinDto = await this.memberService.signin(authHeader);
-  //   if (!signinDto) {
-  //     return res.status(HttpStatus.NO_CONTENT).send();
-  //   }
-  //   const token = this.jwtService.sign(signinDto, {
-  //     expiresIn: this.configService.get('EXTENSION_EXPIRES_IN'),
-  //   });
-  //   return res.send({ token });
-  // }
+  @Public()
+  @Post('/image')
+  @UseInterceptors(FileInterceptor('file'))
+  async analyzeImage(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<AnalyticsResultResponseDto> {
+    console.log('client file: ', file);
+    return this.analyticsService.processImage(file);
+  }
 }
