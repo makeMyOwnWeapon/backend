@@ -23,12 +23,14 @@ export class HistoryController {
   })
   async readHistories(
     @Req() req: UserRequest,
-    @Query('subLectureId') subLectureId: number,
     @Query('lectureHistoryId') lectureHistoryId: number,
   ): Promise<ReadHistoryReportDTO | ReadHistoriesDTO[]> {
     const memberId = req.user.id;
-    if (subLectureId) {
-      const quizzes = await this.quizService.retrieveQuizEntity(subLectureId);
+    if (lectureHistoryId) {
+      const quizResult =
+        await this.historyService.retrieveQuizResultEntity(lectureHistoryId);
+      const quizzes =
+        await this.quizService.retrieveQuizEntityByQuizResultEntity(quizResult);
       return await this.historyService.readHistoryReport(
         lectureHistoryId,
         memberId,
@@ -44,10 +46,12 @@ export class HistoryController {
     summary: '회원레포트 익스텐션에서 상세 조회',
   })
   async readHistoriesInExtension(
-    @Query('subLectureId') subLectureId: number,
     @Query('lectureHistoryId') lectureHistoryId: number,
-  ): Promise<ReadHistoryReportDTO | ReadHistoriesDTO[]> {
-    const quizzes = await this.quizService.retrieveQuizEntity(subLectureId);
+  ): Promise<ReadHistoryReportDTO> {
+    const quizResult =
+      await this.historyService.retrieveQuizResultEntity(lectureHistoryId);
+    const quizzes =
+      await this.quizService.retrieveQuizEntityByQuizResultEntity(quizResult);
     return await this.historyService.readHistoryReportExtension(
       lectureHistoryId,
       quizzes,

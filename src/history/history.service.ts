@@ -26,6 +26,19 @@ export class HistoryService {
     private readonly quizResultRepository: Repository<QuizResultEntity>,
   ) {}
 
+  async retrieveQuizResultEntity(
+    lectureHistoryId: number,
+  ): Promise<QuizResultEntity> {
+    const quizResultEntity = await this.quizResultRepository.findOne({
+      where: { lectureHistories: { id: lectureHistoryId } },
+      relations: ['quiz'],
+    });
+    if (!quizResultEntity) {
+      throw new NotFoundException('quizResultEntity not found');
+    }
+    return quizResultEntity;
+  }
+
   async retrieveLectureHistoryEntity(
     lectureHistoryId: number,
   ): Promise<LectureHistoryEntity> {
@@ -33,7 +46,7 @@ export class HistoryService {
       where: { id: lectureHistoryId },
     });
     if (!lectureHistory) {
-      throw new Error('lectureHistory not found');
+      throw new NotFoundException('lectureHistory not found');
     }
     return lectureHistory;
   }
