@@ -1,6 +1,6 @@
 import { IsString, IsInt, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { AIQuizCreateResponseDTO } from 'src/quiz/dto/ai-quiz-create.dto';
+import { AIQuizCreateResponseDTO, AISummaryCreateResponseDTO } from 'src/quiz/dto/ai-quiz-create.dto';
 
 export class SleepinessAndDistractionDTO {
   @IsString()
@@ -51,10 +51,6 @@ export class ReadHistoryReportExtentionDTO {
   @ApiProperty({ description: 'extention으로 보낼 레포트용 history'})
   readHistoryReport: ReadHistoryReportDTO;
   @ApiProperty({ description: 'gpt가 생성한 summery'})
-  gptSummery: AIQuizCreateResponseDTO
-  @ApiProperty({ description: 'gpt가 생성한 추가문제'})
-  gptAppQuestion: AIQuizCreateResponseDTO
-  @ApiProperty({ description: '생성한 data 확인용'})
-  quizResultString: string
+  gptSummery: AISummaryCreateResponseDTO
 }
 

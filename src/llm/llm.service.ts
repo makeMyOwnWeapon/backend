@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Anthropic from '@anthropic-ai/sdk';
 import { AIQuizCreateResponseDTO } from 'src/quiz/dto/ai-quiz-create.dto';
-import { APPQUESTION_MAKER_TEMPLATE, QUIZ_MAKER_TEMPLATE, Question_Analyze_MAKER_TEMPLATE } from './template';
+import { QUIZ_MAKER_TEMPLATE, Question_Summary_MAKER_TEMPLATE } from './template';
 import { QuizEntity } from 'src/entities/quiz.entity';
 
 @Injectable()
@@ -51,7 +51,7 @@ export default class LLMService {
     return await this.anthropic.messages
       .create({
         model: 'claude-instant-1.2',
-        max_tokens: 500,
+        max_tokens: 1000,
         temperature: 0.5,
         system: template,
         messages: [
@@ -79,8 +79,16 @@ export default class LLMService {
 
   async getResponseContentJson(response: Promise<any>): Promise<any> {
     const dto: string = (await response).content[0].text;
-    return JSON.parse(dto);
+    const startIndex = dto.indexOf('{');
+    const endIndex = dto.lastIndexOf('}') + 1;
+    console.log(dto)
+    if (startIndex === -1 || endIndex === 0) {
+      throw new Error("Invalid JSON data");
+    }
+    const jsonString: string = dto.slice(startIndex, endIndex);
+    return JSON.parse(jsonString);
   }
+  
 
   async generateQuiz(script: string): Promise<AIQuizCreateResponseDTO> {
     return this.getResponseContentJson(
@@ -90,15 +98,10 @@ export default class LLMService {
 
   async generateSummary(script: string): Promise<AIQuizCreateResponseDTO> {
     return this.getResponseContentJson(
-      this.createClaudeCompletion(Question_Analyze_MAKER_TEMPLATE, script),
+      this.createClaudeCompletion(Question_Summary_MAKER_TEMPLATE, script),
     );
   }
 
-  async generateAppQuestion(script: string): Promise<AIQuizCreateResponseDTO> {
-    return this.getResponseContentJson(
-      this.createClaudeCompletion(APPQUESTION_MAKER_TEMPLATE, script),
-    );
-  }
 
   async convertQuizResultToString(quizzes: QuizEntity[]): Promise<string> {
     const quizStrings = quizzes.map(quiz => {

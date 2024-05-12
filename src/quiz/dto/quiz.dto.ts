@@ -18,6 +18,12 @@ export class ChoiceDTO {
   isAnswer: boolean;
 }
 
+export class SummaryDTO {
+  @ApiProperty({ description: '선택지 내용' })
+  @IsString()
+  content: string;
+}
+
 export class QuizDTO {
   @ApiProperty({ description: '문제 설명' })
   @IsString()

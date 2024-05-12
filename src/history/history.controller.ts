@@ -52,22 +52,26 @@ export class HistoryController {
   ): Promise<ReadHistoryReportExtentionDTO> {
     const quizResult =
       await this.historyService.retrieveQuizResultEntity(lectureHistoryId);
-    const quizzes =
+
+      const quizzes =
       await this.quizService.retrieveQuizEntityByQuizResultEntity(quizResult);
-    const quizResultString = 
+    
+      const quizResultString = 
       await this.llmService.convertQuizResultToString(quizzes);
 
-      const gptSummery = await this.llmService.generateSummary(quizResultString)
-      const gptAppQuestion = await this.llmService.generateAppQuestion(quizResultString)
+      const gptSummery = 
+      await this.llmService.generateSummary(quizResultString)
 
     const readHistoryReport = 
      await this.historyService.readHistoryReportExtension(
             lectureHistoryId,
             quizzes,
           );
+    console.log(readHistoryReport)
+    console.log(gptSummery)
 
 
-    return {readHistoryReport , gptSummery, gptAppQuestion, quizResultString}
+    return {readHistoryReport , gptSummery}
   }
 
 
