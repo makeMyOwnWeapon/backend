@@ -14,6 +14,11 @@ export class AnalyticsSaveRequestDto {
   @IsNotEmpty()
   @IsNumber()
   readonly analysisType: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  readonly lectureHistories: number;
+
   toEntity(lectureHistory: LectureHistoryEntity): VideoAnalyticsHistoryEntity {
     const entity = new VideoAnalyticsHistoryEntity();
     entity.startedAt = new Date(this.parseDateString(this.startedAt));
