@@ -194,4 +194,12 @@ export class QuizController {
     );
     return quizDto;
   }
+
+  // @Get('/quizResults/incorrectAnswer')
+  // @ApiOperation({
+  //   summary: '오답시에 돌아가야할 시간 리턴',
+  // })
+  // async timeToGoBack(@Body() quizId: number) {
+  //   return this.quizService.timeToGoBack(quizId);
+  // }
 }

@@ -17,7 +17,7 @@ export class QuizResultEntity extends DefaultEntity {
   @JoinColumn()
   lectureHistories: LectureHistoryEntity;
 
-  @OneToOne(() => ChoiceEntity)
+  @ManyToOne(() => ChoiceEntity, (choice) => choice.quizResult)
   @JoinColumn()
   choice: ChoiceEntity;
 
