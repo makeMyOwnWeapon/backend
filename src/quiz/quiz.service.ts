@@ -77,10 +77,14 @@ export class QuizService {
     // if (!quiz) {
     //   throw new NotFoundException('quiz not found');
     // }
-    const choices = await this.choiceRepository.find({ where: { quiz: quiz } }); // 퀴즈에 관련된 선택지 찾기
-    // if (!choices) {
-    //   throw new NotFoundException('choices not found');
-    // }
+    const choices = await this.choiceRepository.find({
+      where: { quiz: { id: quiz.id } },
+    }); // 퀴즈에 관련된 선택지 찾기
+    if (choices.length == 0) {
+      console.log('choices not found');
+      //throw new NotFoundException('choices not found');
+    }
+    console.log('choice: ', choices);
     quiz.choices = choices; // 퀴즈에 선택지 할당
     return [quiz]; // 퀴즈 엔티티 배열로 반환
   }
@@ -485,5 +489,39 @@ export class QuizService {
       await this.insertChoices(quiz.choices[j], quizzesId);
     }
     return quiz;
+  }
+
+  async timeToGoBack(quizId: number): Promise<number> {
+    // 주어진 quizId에 해당하는 퀴즈 엔티티를 찾음
+    console.log(quizId);
+    const quiz = await this.quizRepository.findOne({
+      where: { id: quizId },
+      relations: ['quizSet'],
+    });
+    console.log('quiz: ', quiz);
+
+    // 주어진 quizId에 해당하는 퀴즈가 없을 경우
+    if (!quiz) {
+      throw new Error(`Quiz with id ${quizId} not found`);
+    }
+
+    // 같은 quizSet에 속하면서 popupTime이 가장 작은 퀴즈를 찾음
+    const earliestQuiz = await this.quizRepository.findOne({
+      where: {
+        quizSet: quiz.quizSet,
+      },
+      order: {
+        popupTime: 'ASC',
+      },
+    });
+
+    // 같은 quizSet에 속하면서 popupTime이 가장 작은 퀴즈가 주어진 퀴즈인 경우
+    if (earliestQuiz.id === quiz.id) {
+      return 0; // 이미 가장 빠른 퀴즈인 경우 0 반환
+    }
+
+    // 같은 quizSet에 속하면서 popupTime이 가장 작은 퀴즈를 찾은 경우
+    // 해당 퀴즈의 popupTime 반환
+    return earliestQuiz.popupTime;
   }
 }
