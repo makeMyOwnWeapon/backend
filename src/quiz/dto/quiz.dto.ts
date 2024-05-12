@@ -18,6 +18,12 @@ export class ChoiceDTO {
   isAnswer: boolean;
 }
 
+export class SummaryDTO {
+  @ApiProperty({ description: '선택지 내용' })
+  @IsString()
+  content: string;
+}
+
 export class QuizDTO {
   @ApiProperty({ description: '문제 설명' })
   @IsString()
@@ -83,6 +89,58 @@ export class CreateQuizSetDTO {
   @Type(() => QuizDTO)
   quizzes: QuizDTO[];
 }
+
+export class SummaryTextDTO{
+
+  @ApiProperty({ description: '문제풀이 분석' })
+  @IsString()
+  reviews: string;
+
+}
+
+export class CreateQuestionSummeryDTO{
+
+  @ApiProperty({ description : '문제풀이 분석 배열'})
+  @IsArray()
+  @ValidateNested({ each: true})
+  @Type(() => SummaryTextDTO)
+  Summary: SummaryTextDTO;
+
+}
+
+
+export class AppQuestionDTO {
+  @ApiProperty({ description: '선택지 내용' })
+  @IsString()
+  content: string;
+
+  @ApiProperty({ description: '이 선택지가 답인지 아닌지' })
+  @IsBoolean()
+  isAnswer: boolean;
+}
+
+export class CreateAppQuestionDTO {
+  @ApiProperty({ description: '문제 설명' })
+  @IsString()
+  instruction: string;
+
+  @ApiProperty({ description: '문제 해설' })
+  @IsString()
+  commentary: string;
+
+  @ApiProperty({ description: '문제 팝업시간' })
+  @IsString()
+  popupTime: string; // 초 단위 정수(hh:mm:ss)
+
+  @ApiProperty({ description: '선택지' })
+  @ValidateNested()
+  @Type(() => AppQuestionDTO)
+  choices: AppQuestionDTO[];
+}
+
+
+
+
 /*
 @Type은 class-transformer 패키지에서 제공하는 데코레이터입니다. 
 이 데코레이터는 클래스의 특정 속성이 어떤 클래스의 인스턴스임을 명시적으로 지정할 때 사용됩니다.

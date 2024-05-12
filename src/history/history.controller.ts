@@ -3,10 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { HistoryService } from './history.service';
 import { QuizService } from 'src/quiz/quiz.service';
 import { ReadHistoriesDTO } from './dto/readHistories.dto';
-import { ReadHistoryReportDTO } from './dto/readHistoryReport.dto';
+import { ReadHistoryReportDTO, ReadHistoryReportExtentionDTO } from './dto/readHistoryReport.dto';
 import { UserRequest } from '../auth/UserRequest';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Public } from 'src/auth/auth.guard';
+import LLMService from 'src/llm/llm.service';
 
 @ApiTags('histories')
 @Controller('history')
@@ -15,6 +16,7 @@ export class HistoryController {
     private jwtService: JwtService,
     private historyService: HistoryService,
     private quizService: QuizService,
+    private llmService: LLMService
   ) {}
   @Get('/')
   @ApiOperation({
@@ -47,14 +49,31 @@ export class HistoryController {
   })
   async readHistoriesInExtension(
     @Query('lectureHistoryId') lectureHistoryId: number,
-  ): Promise<ReadHistoryReportDTO> {
+  ): Promise<ReadHistoryReportExtentionDTO> {
     const quizResult =
       await this.historyService.retrieveQuizResultEntity(lectureHistoryId);
-    const quizzes =
+
+      const quizzes =
       await this.quizService.retrieveQuizEntityByQuizResultEntity(quizResult);
-    return await this.historyService.readHistoryReportExtension(
-      lectureHistoryId,
-      quizzes,
-    );
+    
+      const quizResultString = 
+      await this.llmService.convertQuizResultToString(quizzes);
+
+      const gptSummery = 
+      await this.llmService.generateSummary(quizResultString)
+
+    const readHistoryReport = 
+     await this.historyService.readHistoryReportExtension(
+            lectureHistoryId,
+            quizzes,
+          );
+    console.log(readHistoryReport)
+    console.log(gptSummery)
+
+
+    return {readHistoryReport , gptSummery}
   }
+
+
+
 }
