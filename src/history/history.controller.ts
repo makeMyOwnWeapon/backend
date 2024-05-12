@@ -1,5 +1,4 @@
 import { Controller, Get, Query, Req } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { HistoryService } from './history.service';
 import { QuizService } from 'src/quiz/quiz.service';
 import { ReadHistoriesDTO } from './dto/readHistories.dto';
@@ -16,7 +15,6 @@ import LLMService from 'src/llm/llm.service';
 @Controller('history')
 export class HistoryController {
   constructor(
-    private jwtService: JwtService,
     private historyService: HistoryService,
     private quizService: QuizService,
     private llmService: LLMService,
@@ -69,9 +67,6 @@ export class HistoryController {
         lectureHistoryId,
         quizzes,
       );
-    console.log(readHistoryReport);
-    console.log(gptSummery);
-
     return { readHistoryReport, gptSummery };
   }
 }
