@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Anthropic from '@anthropic-ai/sdk';
-import { AIQuizCreateResponseDTO } from 'src/quiz/dto/ai-quiz-create.dto';
+import { AIQuizCreateResponseDTO } from 'src/quiz/dto/ai-quiz.dto';
 import {
   QUIZ_MAKER_TEMPLATE,
   Question_Summary_MAKER_TEMPLATE,

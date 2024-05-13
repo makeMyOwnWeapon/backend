@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString, ValidateNested } from 'class-validator';
-import { ChoiceDTO, SummaryDTO } from './quiz.dto';
+import { SummaryDTO } from './quiz.dto';
 import { Type } from 'class-transformer';
+import { ChoiceDetailResponseDTO } from './choice.dto';
 
 export class AIQuizCreateRequestDTO {
   @ApiProperty({ description: '소강의 식별자(id)' })
@@ -32,8 +33,8 @@ export class AIQuizCreateResponseDTO {
 
   @ApiProperty({ description: '선택지' })
   @ValidateNested()
-  @Type(() => ChoiceDTO)
-  choices: ChoiceDTO[];
+  @Type(() => ChoiceDetailResponseDTO)
+  choices: ChoiceDetailResponseDTO[];
 }
 
 export class AISummaryCreateResponseDTO {

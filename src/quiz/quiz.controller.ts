@@ -17,7 +17,7 @@ import { MemberService } from 'src/member/member.service';
 import { HistoryService } from 'src/history/history.service';
 import { UserRequest } from '../auth/UserRequest';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { AIQuizCreateRequestDTO } from './dto/ai-quiz-create.dto';
+import { AIQuizCreateRequestDTO } from './dto/ai-quiz.dto';
 import LLMService from 'src/llm/llm.service';
 
 @ApiTags('quizsets')
