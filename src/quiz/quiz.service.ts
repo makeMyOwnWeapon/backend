@@ -16,6 +16,7 @@ import { SubLectureEntity } from 'src/entities/sub-lecture.entity';
 import { QuizResultEntity } from '../entities/quiz-result.entity';
 import { LectureHistoryEntity } from 'src/entities/lecture-history.entity';
 import { NoTimeConvertingQuizDTO } from './dto/quiz.dto';
+import { ChoiceDetailResponseDTO } from './dto/choice.dto';
 
 @Injectable()
 export class QuizService {
@@ -280,6 +281,32 @@ export class QuizService {
     return newChoices.id;
   }
 
+  /**
+   * 입력받은 선택지들을 입력받은 문제에 저장한다.
+   * @param choices 선택지 배열
+   * @param quizzesId 문제 식별자
+   * @returns 선택지 식별자, 선택지명, 정답여부를 가지는 DTO
+   */
+  async insertChoiceDetail(
+    choices,
+    quizzesId,
+  ): Promise<ChoiceDetailResponseDTO> {
+    const quizzes = await this.quizRepository.findOne({
+      where: { id: quizzesId },
+    });
+    if (!quizzes) {
+      throw new Error('quizzes not found');
+    }
+    const newChoices = this.choiceRepository.create({
+      quiz: quizzes,
+      content: choices.content,
+      isAnswer: choices.isAnswer,
+    });
+    const { id, content, isAnswer } =
+      await this.choiceRepository.save(newChoices);
+    return { choiceId: id, content, isAnswer };
+  }
+
   async readQuizSet(): Promise<ReadQuizSetDTO[]> {
     const quizSets = await this.quizSetRepository.find({
       relations: ['subLecture', 'member', 'recommendations'],
@@ -487,9 +514,13 @@ export class QuizService {
       quiz,
       quizSets.id,
     );
+    const choiceDetails = [];
     for (let j = 0; j < quiz.choices.length; j++) {
-      await this.insertChoices(quiz.choices[j], quizzesId);
+      choiceDetails.push(
+        await this.insertChoiceDetail(quiz.choices[j], quizzesId),
+      );
     }
+    quiz.choices = choiceDetails;
     return quiz;
   }
 

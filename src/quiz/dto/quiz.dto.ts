@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { ChoiceDetailResponseDTO } from './choice.dto';
 
 export class ChoiceDTO {
   @ApiProperty({ description: '선택지 내용' })
@@ -58,8 +59,8 @@ export class NoTimeConvertingQuizDTO {
 
   @ApiProperty({ description: '선택지' })
   @ValidateNested()
-  @Type(() => ChoiceDTO)
-  choices: ChoiceDTO[];
+  @Type(() => ChoiceDetailResponseDTO)
+  choices: ChoiceDetailResponseDTO[];
 }
 
 export class CreateQuizSetDTO {
@@ -90,24 +91,19 @@ export class CreateQuizSetDTO {
   quizzes: QuizDTO[];
 }
 
-export class SummaryTextDTO{
-
+export class SummaryTextDTO {
   @ApiProperty({ description: '문제풀이 분석' })
   @IsString()
   reviews: string;
-
 }
 
-export class CreateQuestionSummeryDTO{
-
-  @ApiProperty({ description : '문제풀이 분석 배열'})
+export class CreateQuestionSummeryDTO {
+  @ApiProperty({ description: '문제풀이 분석 배열' })
   @IsArray()
-  @ValidateNested({ each: true})
+  @ValidateNested({ each: true })
   @Type(() => SummaryTextDTO)
   Summary: SummaryTextDTO;
-
 }
-
 
 export class AppQuestionDTO {
   @ApiProperty({ description: '선택지 내용' })
@@ -137,9 +133,6 @@ export class CreateAppQuestionDTO {
   @Type(() => AppQuestionDTO)
   choices: AppQuestionDTO[];
 }
-
-
-
 
 /*
 @Type은 class-transformer 패키지에서 제공하는 데코레이터입니다. 
