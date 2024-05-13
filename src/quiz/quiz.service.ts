@@ -10,12 +10,15 @@ import { QuizEntity } from '../entities/quiz.entity';
 import { QuizSetEntity } from '../entities/quiz-set.entity';
 import { ChoiceEntity } from '../entities/choice.entity';
 import { RecommendationEntity } from '../entities/recommendation-entity';
-import { ReadQuizSetDTO, ReadCertainLectureQuizDTO } from './dto/quiz_sets.dto';
+import {
+  OnlyQuizSetResponseDTO,
+  QuizSetWithSubLectureResponseDTO,
+} from './dto/quiz_sets.dto';
 import { MemberEntity } from 'src/entities/member.entity';
 import { SubLectureEntity } from 'src/entities/sub-lecture.entity';
 import { QuizResultEntity } from '../entities/quiz-result.entity';
 import { LectureHistoryEntity } from 'src/entities/lecture-history.entity';
-import { NoTimeConvertingQuizDTO } from './dto/quiz.dto';
+import { QuizWithChoicesResponseDTO } from './dto/quiz.dto';
 import { ChoiceDetailResponseDTO } from './dto/choice.dto';
 
 @Injectable()
@@ -232,7 +235,7 @@ export class QuizService {
   }
 
   async insertQuizWithoutTimeConverting(
-    quiz: NoTimeConvertingQuizDTO,
+    quiz: QuizWithChoicesResponseDTO,
     quizSetsId: number,
   ): Promise<number> {
     const quizSets = await this.quizSetRepository.findOne({
@@ -307,14 +310,14 @@ export class QuizService {
     return { choiceId: id, content, isAnswer };
   }
 
-  async readQuizSet(): Promise<ReadQuizSetDTO[]> {
+  async readQuizSet(): Promise<QuizSetWithSubLectureResponseDTO[]> {
     const quizSets = await this.quizSetRepository.find({
       relations: ['subLecture', 'member', 'recommendations'],
       //relations: quizSetRepository와 관계된 엔티티의 정보를 함께 로드
       order: { createdAt: 'DESC' },
     });
 
-    const allQuizSet: ReadQuizSetDTO[] = await Promise.all(
+    const allQuizSet: QuizSetWithSubLectureResponseDTO[] = await Promise.all(
       //가져온 quiz_sets를 순회하면서 각 quiz_sets의 정보를 ReadQuizSetDTO 형식으로 매핑
       quizSets.map(async (quizSet) => {
         //quizSets을 순회하면서 각 요소인 quizSet에 접근하여 필요로하는 값들을 리턴
@@ -449,7 +452,7 @@ export class QuizService {
       relations: ['member', 'recommendations'],
       //relations: quizSetRepository와 관계된 엔티티의 정보를 함께 로드
     });
-    const allQuizSet: ReadCertainLectureQuizDTO[] = await Promise.all(
+    const allQuizSet: OnlyQuizSetResponseDTO[] = await Promise.all(
       quizSets.map(async (quizSet) => {
         const recommendationCount = await this.recommendationRepository.count({
           where: { quizSet: { id: quizSet.id } },
@@ -507,8 +510,8 @@ export class QuizService {
     title: string,
     subLecture: SubLectureEntity,
     member: MemberEntity,
-    quiz: NoTimeConvertingQuizDTO,
-  ): Promise<NoTimeConvertingQuizDTO> {
+    quiz: QuizWithChoicesResponseDTO,
+  ): Promise<QuizWithChoicesResponseDTO> {
     const quizSets = await this.upsertQuizSets(title, subLecture, member);
     const quizzesId = await this.insertQuizWithoutTimeConverting(
       quiz,

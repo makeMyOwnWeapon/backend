@@ -9,8 +9,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { QuizService } from './quiz.service';
-import { CreateQuizSetDTO, NoTimeConvertingQuizDTO } from './dto/quiz.dto';
-import { RecommendationDTO } from './dto/quiz_sets.dto';
+import { QuizWithChoicesResponseDTO } from './dto/quiz.dto';
+import { CreateQuizSetRequestDTO } from './dto/quiz_sets.dto';
 import { CreateQuizResultDTO } from './dto/quiz_result.dto';
 import { LectureService } from 'src/lecture/lecture.service';
 import { MemberService } from 'src/member/member.service';
@@ -19,6 +19,7 @@ import { UserRequest } from '../auth/UserRequest';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AIQuizCreateRequestDTO } from './dto/ai-quiz.dto';
 import LLMService from 'src/llm/llm.service';
+import { UpdateRecommendationRequestDTO } from './dto/recommendation.dto';
 
 @ApiTags('quizsets')
 @Controller('quizsets')
@@ -114,7 +115,7 @@ export class QuizController {
   })
   async updateRecommandation(
     @Req() req: UserRequest,
-    @Body() recommendationInfo: RecommendationDTO,
+    @Body() recommendationInfo: UpdateRecommendationRequestDTO,
   ) {
     const memberId = req.user.id;
     const NumOfRecommendations = recommendationInfo.numOfRecommendation;
@@ -133,7 +134,7 @@ export class QuizController {
   })
   async createQuiz(
     @Req() req: UserRequest,
-    @Body() quizInfo: CreateQuizSetDTO,
+    @Body() quizInfo: CreateQuizSetRequestDTO,
   ) {
     const mainLectureId = await this.lectureService.insertMainLectures(
       quizInfo.mainLectureTitle,
@@ -178,7 +179,7 @@ export class QuizController {
   })
   async createQuizWithAI(
     @Body() dto: AIQuizCreateRequestDTO,
-  ): Promise<NoTimeConvertingQuizDTO> {
+  ): Promise<QuizWithChoicesResponseDTO> {
     const AI_ID = 0;
     const AI_QUIZ_MAKER = await this.memberService.retrieveMemberEntity(AI_ID);
     const quiz = await this.llmService.generateQuiz(dto.script);

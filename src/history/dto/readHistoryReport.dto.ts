@@ -1,6 +1,6 @@
 import { IsString, IsInt, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { AISummaryCreateResponseDTO } from 'src/quiz/dto/ai-quiz.dto';
+import { AdditionalKeywordsResponseDTO } from './additionalKeyword.dto';
 
 export class SleepinessAndDistractionDTO {
   @IsString()
@@ -20,7 +20,7 @@ export class ChoiceDTO {
   isAnswer: boolean;
 }
 
-export class QuizDTO {
+export class QuizResultResponseDTO {
   @IsString()
   question: string;
   choices: ChoiceDTO[];
@@ -38,7 +38,7 @@ export class ReadHistoryReportDTO {
   @ApiProperty({ description: '졸음/자리이탈 분석시간' })
   sleepinessAndDistraction: SleepinessAndDistractionDTO[];
   @ApiProperty({ description: '문제 정보' })
-  quizzes: QuizDTO[];
+  quizzes: QuizResultResponseDTO[];
   @ApiProperty({ description: '분석 시작 시각', default: 0 })
   @IsString()
   studyStartTime: Date;
@@ -50,6 +50,7 @@ export class ReadHistoryReportDTO {
 export class ReadHistoryReportExtentionDTO {
   @ApiProperty({ description: 'extention으로 보낼 레포트용 history' })
   readHistoryReport: ReadHistoryReportDTO;
+  // TODO: 오타 수정!
   @ApiProperty({ description: 'gpt가 생성한 summery' })
-  gptSummery: AISummaryCreateResponseDTO;
+  gptSummery: AdditionalKeywordsResponseDTO;
 }

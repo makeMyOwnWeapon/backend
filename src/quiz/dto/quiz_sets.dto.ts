@@ -1,7 +1,9 @@
-import { IsString, IsInt } from 'class-validator';
+import { IsString, IsInt, IsArray, ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { CreateQuizWithChoicesRequestDTO } from './quiz.dto';
 
-export class ReadQuizSetDTO {
+export class QuizSetWithSubLectureResponseDTO {
   @IsInt()
   quizSetId: number;
   @IsString()
@@ -18,8 +20,35 @@ export class ReadQuizSetDTO {
   recommendationCount: number;
 }
 
-// ReadSertainLectureQuizDTO
-export class ReadCertainLectureQuizDTO {
+export class CreateQuizSetRequestDTO {
+  @ApiProperty({ description: '문제집 제목' })
+  @IsString()
+  title: string;
+
+  @ApiProperty({ description: '소강의URL' })
+  @IsString()
+  subLectureUrl: string;
+
+  @ApiProperty({ description: '소강의 제목' })
+  @IsString()
+  subLectureTitle: string;
+
+  @ApiProperty({ description: '대강의 제목' })
+  @IsString()
+  mainLectureTitle: string;
+
+  @ApiProperty({ description: '영상 길이' })
+  @IsInt()
+  duration: number;
+
+  @ApiProperty({ description: '문제 정보' })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateQuizWithChoicesRequestDTO)
+  quizzes: CreateQuizWithChoicesRequestDTO[];
+}
+
+export class OnlyQuizSetResponseDTO {
   @IsInt()
   quizSetId: number;
   @IsString()
@@ -30,13 +59,4 @@ export class ReadCertainLectureQuizDTO {
   recommendationCount: number;
   @IsString()
   createdAt: Date;
-}
-
-export class RecommendationDTO {
-  @ApiProperty({ description: '현재 추천수' })
-  @IsInt()
-  numOfRecommendation: number;
-  @ApiProperty({ description: 'quizSetId' })
-  @IsInt()
-  quizSetId: number;
 }
