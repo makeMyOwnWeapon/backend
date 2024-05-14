@@ -53,9 +53,9 @@ export default class LLMService {
   ): Promise<any> {
     return await this.anthropic.messages
       .create({
-        model: 'claude-instant-1.2',
+        model: 'claude-3-haiku-20240307',
         max_tokens: 1000,
-        temperature: 0.5,
+        temperature: 0.4,
         system: template,
         messages: [
           {
