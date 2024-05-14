@@ -75,10 +75,10 @@ export class QuizService {
 
   async retrieveQuizEntityByQuizResultEntity(
     quizResult: QuizResultEntity,
-  ): Promise<QuizEntity[]> {
+  ): Promise<QuizEntity> {
     // 문제와 해당 문제에 대한 선택지, 정답 여부, 해설 가져오기
     if (!quizResult) {
-      return [];
+      return;
     }
     const quiz = quizResult.quiz; // 퀴즈 결과에 대한 퀴즈 엔티티 가져오기
     // if (!quiz) {
@@ -92,7 +92,7 @@ export class QuizService {
       //throw new NotFoundException('choices not found');
     }
     quiz.choices = choices; // 퀴즈에 선택지 할당
-    return [quiz]; // 퀴즈 엔티티 배열로 반환
+    return quiz; // 퀴즈 엔티티 배열로 반환
   }
 
   async retrieveQuizEntity(subLectureId: number): Promise<QuizEntity[]> {

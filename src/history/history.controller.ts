@@ -33,19 +33,18 @@ export class HistoryController {
       const quizResult =
         await this.historyService.retrieveQuizResultEntity(lectureHistoryId);
       const quizzes = [];
-      const reports = [];
+
       for (let i = 0; i < quizResult.length; i++) {
         quizzes[i] =
           await this.quizService.retrieveQuizEntityByQuizResultEntity(
             quizResult[i],
           );
-
-        reports[i] = await this.historyService.readHistoryReport(
-          lectureHistoryId,
-          memberId,
-          quizzes[i],
-        );
       }
+      const reports = await this.historyService.readHistoryReport(
+        lectureHistoryId,
+        memberId,
+        quizzes,
+      );
       return reports;
     } else {
       const histories = await this.historyService.readHistories(memberId);
@@ -64,27 +63,20 @@ export class HistoryController {
       await this.historyService.retrieveQuizResultEntity(lectureHistoryId);
 
     const quizzes = [];
-    const reports = [];
-    const quizResultString = [];
-    const gptSummery = [];
     for (let i = 0; i < quizResult.length; i++) {
       quizzes[i] = await this.quizService.retrieveQuizEntityByQuizResultEntity(
         quizResult[i],
       );
-
-      reports[i] = await this.historyService.readHistoryReportExtension(
-        lectureHistoryId,
-        quizzes[i],
-      );
-
-      quizResultString[i] = await this.llmService.convertQuizResultToString(
-        quizzes[i],
-      );
-
-      gptSummery[i] = await this.llmService.generateSummary(
-        quizResultString[i],
-      );
     }
+
+    const reports = await this.historyService.readHistoryReportExtension(
+      lectureHistoryId,
+      quizzes,
+    );
+    const quizResultString =
+      await this.llmService.convertQuizResultToString(quizzes);
+
+    const gptSummery = await this.llmService.generateSummary(quizResultString);
 
     return { reports, gptSummery };
   }
