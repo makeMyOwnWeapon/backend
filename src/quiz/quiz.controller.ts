@@ -89,16 +89,8 @@ export class QuizController {
     summary: '문제집의 문제조회',
     description: '문제집의 문제조회',
   })
-  async getQuizDetails(
-    @Param('quizsetId') quizsetId: number,
-    @Query('commentary') isSeeCommentary: boolean,
-    @Query('answer') isSeeAnswer: boolean,
-  ) {
-    return this.quizService.readQuizDetails(
-      quizsetId,
-      isSeeCommentary,
-      isSeeAnswer,
-    );
+  async getQuizDetails(@Param('quizsetId') quizsetId: number) {
+    return this.quizService.readQuizDetails(quizsetId);
   }
   @Delete('/:quizsetId/quizzes')
   @ApiOperation({

@@ -402,11 +402,7 @@ export class QuizService {
     console.log('삭제되었습니다');
   }
 
-  async readQuizDetails(
-    quizSetId: number,
-    isSeeCommentary: boolean,
-    isSeeAnswer: boolean,
-  ): Promise<any[]> {
+  async readQuizDetails(quizSetId: number): Promise<any[]> {
     // 문제집의 id에 해당하는 퀴즈를 찾음
     const quizzes = await this.quizRepository.find({
       where: { quizSet: { id: quizSetId } },
@@ -428,14 +424,14 @@ export class QuizService {
       choiceDetails = choices.map((choice) => ({
         choiceId: choice.id,
         content: choice.content,
-        ...(isSeeAnswer && { isAnswer: choice.isAnswer }), // isSeeAnswer가 true일 때만 isAnswer를 추가
+        isAnswer: choice.isAnswer, // isSeeAnswer가 true일 때만 isAnswer를 추가
       }));
 
       // 퀴즈 상세 정보를 배열에 추가
       quizDetails.push({
         quizId: quiz.id,
         instruction: quiz.instruction,
-        ...(isSeeCommentary && { commentary: quiz.commentary }), // isSeeCommentary true일 때만 commentary를 추가
+        commentary: quiz.commentary, // isSeeCommentary true일 때만 commentary를 추가
         popupTime: quiz.popupTime,
         choices: choiceDetails,
       });
