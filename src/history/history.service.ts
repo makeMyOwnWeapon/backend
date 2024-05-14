@@ -28,8 +28,8 @@ export class HistoryService {
 
   async retrieveQuizResultEntity(
     lectureHistoryId: number,
-  ): Promise<QuizResultEntity> {
-    const quizResultEntity = await this.quizResultRepository.findOne({
+  ): Promise<QuizResultEntity[]> {
+    const quizResultEntity = await this.quizResultRepository.find({
       where: { lectureHistories: { id: lectureHistoryId } },
       relations: ['quiz'],
     });
