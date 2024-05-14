@@ -40,7 +40,8 @@ export class HistoryController {
         quizzes,
       );
     } else {
-      return await this.historyService.readHistories(memberId);
+      const histories = await this.historyService.readHistories(memberId);
+      return histories.reverse();
     }
   }
   @Public()
