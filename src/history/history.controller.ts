@@ -3,7 +3,7 @@ import { HistoryService } from './history.service';
 import { QuizService } from 'src/quiz/quiz.service';
 import { ReadHistoriesDTO } from './dto/readHistories.dto';
 import {
-  ReadHistoryReportDTO,
+  // ReadHistoryReportDTO,
   ReadHistoryReportExtentionDTO,
 } from './dto/readHistoryReport.dto';
 import { UserRequest } from '../auth/UserRequest';
@@ -27,7 +27,7 @@ export class HistoryController {
   async readHistories(
     @Req() req: UserRequest,
     @Query('lectureHistoryId') lectureHistoryId: number,
-  ): Promise<ReadHistoryReportDTO | ReadHistoriesDTO[]> {
+  ): Promise<ReadHistoryReportExtentionDTO | ReadHistoriesDTO[]> {
     const memberId = req.user.id;
     if (lectureHistoryId) {
       const quizResult =
@@ -45,7 +45,14 @@ export class HistoryController {
         memberId,
         quizzes,
       );
-      return reports;
+
+      const quizResultString =
+        await this.llmService.convertQuizResultToString(quizzes);
+
+      const gptSummery =
+        await this.llmService.generateSummary(quizResultString);
+
+      return { reports, gptSummery };
     } else {
       const histories = await this.historyService.readHistories(memberId);
       return histories.reverse();
