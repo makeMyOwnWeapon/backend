@@ -100,7 +100,19 @@ export class LectureService {
       subLecture: { id: subLectureId },
       member: await member,
     });
-    lectureHistory.startedAt = new Date();
+    // 현재 시간을 가져옵니다.
+    const now = new Date();
+
+    // 현재 시간을 UTC로 변환합니다.
+    const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+
+    // 9시간을 밀리초 단위로 변환하여 더합니다.
+    const nineHoursInMilliseconds = 9 * 60 * 60 * 1000;
+    const adjustedTime = new Date(utcTime + nineHoursInMilliseconds);
+
+    // lectureHistory 객체의 startedAt 속성에 저장합니다.
+    lectureHistory.startedAt = adjustedTime;
+
     const savedLectureHistory =
       await this.lectureHistoryRepository.save(lectureHistory);
 
@@ -114,7 +126,18 @@ export class LectureService {
     if (!lectureHistory) {
       throw new NotFoundException('수강기록이 존재하지 않음');
     }
-    lectureHistory.endedAt = new Date();
+    // 현재 시간을 가져옵니다.
+    const now = new Date();
+
+    // 현재 시간을 UTC로 변환합니다.
+    const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+
+    // 9시간을 밀리초 단위로 변환하여 더합니다.
+    const nineHoursInMilliseconds = 9 * 60 * 60 * 1000;
+    const adjustedTime = new Date(utcTime + nineHoursInMilliseconds);
+
+    // lectureHistory 객체의 startedAt 속성에 저장합니다.
+    lectureHistory.endedAt = adjustedTime;
     return {
       lectureHistoryId: (
         await this.lectureHistoryRepository.save(lectureHistory)
