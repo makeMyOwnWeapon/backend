@@ -3,7 +3,7 @@ import { HistoryService } from './history.service';
 import { QuizService } from 'src/quiz/quiz.service';
 import { ReadHistoriesDTO } from './dto/readHistories.dto';
 import {
-  ReadHistoryReportDTO,
+  ReadHistoryReportExtentionNoQuizResultDTO,
   ReadHistoryReportExtentionDTO,
 } from './dto/readHistoryReport.dto';
 import { UserRequest } from '../auth/UserRequest';
@@ -28,7 +28,9 @@ export class HistoryController {
     @Req() req: UserRequest,
     @Query('lectureHistoryId') lectureHistoryId: number,
   ): Promise<
-    ReadHistoryReportDTO | ReadHistoryReportExtentionDTO | ReadHistoriesDTO[]
+    | ReadHistoryReportExtentionNoQuizResultDTO
+    | ReadHistoryReportExtentionDTO
+    | ReadHistoriesDTO[]
   > {
     const memberId = req.user.id;
     if (lectureHistoryId) {
@@ -49,7 +51,7 @@ export class HistoryController {
       );
 
       if (quizzes.length == 0) {
-        return reports;
+        return { reports };
       }
       const quizResultString =
         await this.llmService.convertQuizResultToString(quizzes);
@@ -70,7 +72,9 @@ export class HistoryController {
   })
   async readHistoriesInExtension(
     @Query('lectureHistoryId') lectureHistoryId: number,
-  ): Promise<ReadHistoryReportDTO | ReadHistoryReportExtentionDTO> {
+  ): Promise<
+    ReadHistoryReportExtentionNoQuizResultDTO | ReadHistoryReportExtentionDTO
+  > {
     const quizResult =
       await this.historyService.retrieveQuizResultEntity(lectureHistoryId);
 
@@ -85,9 +89,8 @@ export class HistoryController {
       lectureHistoryId,
       quizzes,
     );
-
     if (quizzes.length == 0) {
-      return reports;
+      return { reports };
     }
     const quizResultString =
       await this.llmService.convertQuizResultToString(quizzes);

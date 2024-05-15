@@ -54,3 +54,9 @@ export class ReadHistoryReportExtentionDTO {
   @ApiProperty({ description: 'gpt가 생성한 summery' })
   gptSummery: AdditionalKeywordsResponseDTO;
 }
+
+export class ReadHistoryReportExtentionNoQuizResultDTO {
+  @ApiProperty({ description: 'extention으로 보낼 레포트용 history' })
+  reports: ReadHistoryReportDTO;
+  // TODO: 오타 수정!
+}
