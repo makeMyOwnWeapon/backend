@@ -24,9 +24,7 @@ export class LectureController {
     private lectureService: LectureService,
     private memberService: MemberService,
   ) {}
-
   onModuleInit() {}
-
   @Get('/sub-lecture')
   retrieveLecture(
     @Query('url') url: string,
@@ -39,9 +37,11 @@ export class LectureController {
     @Req() req: UserRequest,
     @Body() dto: SubLectureIdRetrieveResponseDto,
   ): Promise<LectureHistoryResponseDto> {
+    const startTime = this.parseDateString(dto.startedAt);
     return this.lectureService.initializeLectureHistory(
       this.memberService.retrieveMemberEntity(req.user.id),
       dto.subLectureId,
+      startTime,
     );
   }
 
@@ -49,11 +49,27 @@ export class LectureController {
   async disconnectHistory(
     @Req() req: UserRequest,
     @Body() dto: LectureHistoryResponseDto,
-  ) {
-    const leactureHistoryId = await this.lectureService.finalizeLectureHistory(
+  ): Promise<LectureHistoryResponseDto> {
+    const endTime = this.parseDateString(dto.endedAt);
+    return this.lectureService.finalizeLectureHistory(
       dto.lectureHistoryId,
+      endTime,
     );
-    return leactureHistoryId;
+  }
+
+  parseDateString(dateString: string): Date {
+    const datePart = dateString.substring(0, 8);
+    const timePart = dateString.substring(9);
+
+    const year = parseInt(datePart.substring(0, 4), 10);
+    const month = parseInt(datePart.substring(4, 6), 10) - 1;
+    const day = parseInt(datePart.substring(6, 8), 10);
+
+    const hours = parseInt(timePart.substring(0, 2), 10);
+    const minutes = parseInt(timePart.substring(3, 5), 10);
+    const seconds = parseInt(timePart.substring(6, 8), 10);
+
+    return new Date(year, month, day, hours, minutes, seconds);
   }
 
   @Post('/main-lecture/:mainLectureTitle/sub-lecture')

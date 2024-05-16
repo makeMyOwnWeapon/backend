@@ -5,4 +5,6 @@ export class LectureHistoryResponseDto {
   @ApiProperty({ description: 'lectureHistoryId' })
   @IsInt()
   lectureHistoryId: number;
+  startedAt: string;
+  endedAt: string;
 }
