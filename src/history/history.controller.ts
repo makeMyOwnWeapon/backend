@@ -53,11 +53,9 @@ export class HistoryController {
       if (quizzes.length == 0) {
         return { reports };
       }
-      const quizResultString =
-        await this.llmService.convertQuizResultToString(quizzes);
 
       const gptSummery =
-        await this.llmService.generateSummary(quizResultString);
+        await this.llmService.readGptComments(lectureHistoryId);
 
       return { reports, gptSummery };
     } else {
@@ -96,6 +94,8 @@ export class HistoryController {
       await this.llmService.convertQuizResultToString(quizzes);
 
     const gptSummery = await this.llmService.generateSummary(quizResultString);
+
+    await this.llmService.saveGptComments(lectureHistoryId, gptSummery);
 
     return { reports, gptSummery };
   }

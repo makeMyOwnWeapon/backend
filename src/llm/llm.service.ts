@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { GptCommentEntity } from '../entities/gpt-comment.entity';
 import { ConfigService } from '@nestjs/config';
 import Anthropic from '@anthropic-ai/sdk';
 import { AIQuizCreateResponseDTO } from 'src/quiz/dto/ai-quiz.dto';
@@ -7,11 +10,19 @@ import {
   Question_Summary_MAKER_TEMPLATE,
 } from './template';
 import { QuizEntity } from 'src/entities/quiz.entity';
+import { LectureHistoryEntity } from '../entities/lecture-history.entity';
+import { AISummaryDTO } from './dto/AiComment.dto';
 
 @Injectable()
 export default class LLMService {
   private readonly anthropic: Anthropic;
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    @InjectRepository(GptCommentEntity)
+    private readonly gptCommentRepository: Repository<GptCommentEntity>,
+    @InjectRepository(LectureHistoryEntity)
+    private readonly lectureHistoryRepository: Repository<LectureHistoryEntity>,
+  ) {
     const API_KEY: string = configService.get<string>('CLAUDE_API_KEY');
     const configuration = { apiKey: API_KEY };
     this.anthropic = new Anthropic(configuration);
@@ -98,10 +109,45 @@ export default class LLMService {
     );
   }
 
-  async generateSummary(script: string): Promise<AIQuizCreateResponseDTO> {
+  async generateSummary(script: string): Promise<AISummaryDTO> {
     return this.getResponseContentJson(
       this.createClaudeCompletion(Question_Summary_MAKER_TEMPLATE, script),
     );
+  }
+
+  async readGptComments(lectureHistoryId: number): Promise<AISummaryDTO> {
+    const gptComments = await this.gptCommentRepository.find({
+      where: { lectureHistory: { id: lectureHistoryId } },
+    });
+
+    const summary = gptComments.map((gptComment) => ({
+      keyword: gptComment.gptKeyword,
+      comment: gptComment.gptCommentary,
+    }));
+
+    return { summary };
+  }
+
+  async saveGptComments(
+    lectureHistoryId: number,
+    gptSummery: AISummaryDTO,
+  ): Promise<void> {
+    const lectureHistory = await this.lectureHistoryRepository.findOne({
+      where: { id: lectureHistoryId },
+    });
+    if (!lectureHistory) {
+      throw new Error('LectureHistory not found');
+    }
+
+    const gptComments = gptSummery.summary.map(({ keyword, comment }) => {
+      const gptComment = new GptCommentEntity();
+      gptComment.lectureHistory = lectureHistory;
+      gptComment.gptKeyword = keyword;
+      gptComment.gptCommentary = comment;
+      return gptComment;
+    });
+
+    await this.gptCommentRepository.save(gptComments);
   }
 
   async convertQuizResultToString(quizzes: QuizEntity[]): Promise<string> {

@@ -6,6 +6,7 @@ import { SubLectureEntity } from '../entities/sub-lecture.entity';
 import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
 import { LectureController } from './lecture.controller';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
+import { GptCommentEntity } from '../entities/gpt-comment.entity';
 import { MemberModule } from 'src/member/member.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { MemberModule } from 'src/member/member.module';
       SubLectureEntity,
       LectureImageUrlEntity,
       LectureHistoryEntity,
+      GptCommentEntity,
     ]),
     MemberModule,
   ],

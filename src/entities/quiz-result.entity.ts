@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { DefaultEntity } from './default-entity';
 import { ChoiceEntity } from './choice.entity';
 import { QuizEntity } from './quiz.entity';

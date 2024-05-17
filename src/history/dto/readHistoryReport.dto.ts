@@ -1,6 +1,6 @@
 import { IsString, IsInt, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { AdditionalKeywordsResponseDTO } from './additionalKeyword.dto';
+import { AISummaryDTO } from '../../llm/dto/AiComment.dto';
 
 export class SleepinessAndDistractionDTO {
   @IsString()
@@ -52,7 +52,7 @@ export class ReadHistoryReportExtentionDTO {
   reports: ReadHistoryReportDTO;
   // TODO: 오타 수정!
   @ApiProperty({ description: 'gpt가 생성한 summery' })
-  gptSummery: AdditionalKeywordsResponseDTO;
+  gptSummery: AISummaryDTO;
 }
 
 export class ReadHistoryReportExtentionNoQuizResultDTO {

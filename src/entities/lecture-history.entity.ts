@@ -4,6 +4,7 @@ import { MemberEntity } from './member.entity';
 import { DefaultEntity } from './default-entity';
 import { QuizResultEntity } from './quiz-result.entity';
 import { VideoAnalyticsHistoryEntity } from './video-analytics-history.entity';
+import { GptCommentEntity } from './gpt-comment.entity';
 
 @Entity('lecture_histories')
 export class LectureHistoryEntity extends DefaultEntity {
@@ -33,4 +34,10 @@ export class LectureHistoryEntity extends DefaultEntity {
       videoAnalyticsHistoryEntity.lectureHistories,
   )
   videoAnalyticsHistories: VideoAnalyticsHistoryEntity[];
+
+  @OneToMany(
+    () => GptCommentEntity,
+    (gptCommentEntity) => gptCommentEntity.lectureHistory,
+  )
+  gptComments: GptCommentEntity;
 }
