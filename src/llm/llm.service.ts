@@ -130,7 +130,7 @@ export default class LLMService {
 
   async saveGptComments(
     lectureHistoryId: number,
-    gptSummary: AISummaryDTO,
+    gptSummery: AISummaryDTO,
   ): Promise<void> {
     const lectureHistory = await this.lectureHistoryRepository.findOne({
       where: { id: lectureHistoryId },
@@ -139,7 +139,7 @@ export default class LLMService {
       throw new Error('LectureHistory not found');
     }
 
-    const gptComments = gptSummary.summary.map(({ keyword, comment }) => {
+    const gptComments = gptSummery.summary.map(({ keyword, comment }) => {
       const gptComment = new GptCommentEntity();
       gptComment.lectureHistory = lectureHistory;
       gptComment.gptKeyword = keyword;

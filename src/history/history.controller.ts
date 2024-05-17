@@ -54,10 +54,10 @@ export class HistoryController {
         return { reports };
       }
 
-      const gptSummary =
+      const gptSummery =
         await this.llmService.readGptComments(lectureHistoryId);
 
-      return { reports, gptSummary };
+      return { reports, gptSummery };
     } else {
       const histories = await this.historyService.readHistories(memberId);
       return histories.reverse();
@@ -93,10 +93,10 @@ export class HistoryController {
     const quizResultString =
       await this.llmService.convertQuizResultToString(quizzes);
 
-    const gptSummary = await this.llmService.generateSummary(quizResultString);
+    const gptSummery = await this.llmService.generateSummary(quizResultString);
 
-    await this.llmService.saveGptComments(lectureHistoryId, gptSummary);
+    await this.llmService.saveGptComments(lectureHistoryId, gptSummery);
 
-    return { reports, gptSummary };
+    return { reports, gptSummery };
   }
 }
