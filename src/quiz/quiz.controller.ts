@@ -17,7 +17,7 @@ import { MemberService } from 'src/member/member.service';
 import { HistoryService } from 'src/history/history.service';
 import { UserRequest } from '../auth/UserRequest';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { AIQuizCreateRequestDTO } from './dto/ai-quiz.dto';
+import { AIQuizCreateRequestDTO, AIQuizCreateResponseDTO } from './dto/ai-quiz.dto';
 import LLMService from 'src/llm/llm.service';
 import { UpdateRecommendationRequestDTO } from './dto/recommendation.dto';
 
@@ -188,11 +188,19 @@ export class QuizController {
     return quizDto;
   }
 
-  // @Get('/quizResults/incorrectAnswer')
-  // @ApiOperation({
-  //   summary: '오답시에 돌아가야할 시간 리턴',
-  // })
-  // async timeToGoBack(@Body() quizId: number) {
-  //   return this.quizService.timeToGoBack(quizId);
-  // }
+  @Post('/llm/nosave')
+  @ApiOperation({
+    summary: '사용자가 AI 도움을 받아 문제집 생성을 위해 저장없이 생성된 문제집만 반환',
+    description:
+        'Claude를 통해 강의 스크립트를 입력받아 특정 강의의 문제집을 만들어냄',
+  })
+  async noSaveCreateQuizWithAI(
+      @Body() dto: AIQuizCreateRequestDTO,
+  ): Promise<AIQuizCreateResponseDTO> {
+
+    const quiz = await this.llmService.generateQuiz(dto.script);
+    quiz.popupTime = dto.popupTime;
+    return quiz;
+  }
+
 }
