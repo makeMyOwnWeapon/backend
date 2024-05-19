@@ -12,10 +12,12 @@ import {
 import { QuizEntity } from 'src/entities/quiz.entity';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 import { AISummaryDTO } from './dto/AiComment.dto';
+import OpenAI from 'openai';
 
 @Injectable()
 export default class LLMService {
   private readonly anthropic: Anthropic;
+  private readonly openai: OpenAI;
   constructor(
     private configService: ConfigService,
     @InjectRepository(GptCommentEntity)
@@ -23,9 +25,30 @@ export default class LLMService {
     @InjectRepository(LectureHistoryEntity)
     private readonly lectureHistoryRepository: Repository<LectureHistoryEntity>,
   ) {
-    const API_KEY: string = configService.get<string>('CLAUDE_API_KEY');
-    const configuration = { apiKey: API_KEY };
+    // Claude (개발)
+    const CLAUDE_API_KEY: string = configService.get<string>('CLAUDE_API_KEY');
+    const configuration = { apiKey: CLAUDE_API_KEY };
     this.anthropic = new Anthropic(configuration);
+    // ChatGPT (운영)
+    const CHAT_GPT_API_KEY: string =
+      configService.get<string>('CHAT_GPT_API_KEY');
+    this.openai = new OpenAI({ apiKey: CHAT_GPT_API_KEY });
+  }
+
+  async chatGPT(script: string) {
+    const completion = await this.openai.chat.completions.create({
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: script },
+      ],
+      model: 'gpt-4o',
+      response_format: { type: 'json_object' },
+      max_tokens: 1000,
+      temperature: 0.4,
+      n: 1,
+    });
+    console.log(completion.choices[0]);
+    return completion;
   }
 
   async createMockResponse() {
