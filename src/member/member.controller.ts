@@ -100,6 +100,9 @@ export class MemberController {
   @ApiResponse({ status: 201, description: '로그인에 성공하였습니다' })
   async getMember(@Headers('Authorization') authHeader: string) {
     const oauthId = this.extractSubFromToken(authHeader);
+    if (!oauthId) {
+      return null;
+    }
     const member = await this.memberService.signin(oauthId);
     if (!member) {
       return null;
