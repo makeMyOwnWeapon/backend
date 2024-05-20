@@ -11,10 +11,4 @@ export class AppController {
   getEnv(): string {
     return process.env.NODE_ENV;
   }
-
-  @Public()
-  @Get('/gpt-test')
-  gptTest() {
-    return this.llmService.chatGPT();
-  }
 }

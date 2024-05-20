@@ -30,6 +30,10 @@ export default class LLMService {
     const CLAUDE_API_KEY: string = configService.get<string>('CLAUDE_API_KEY');
     const configuration = { apiKey: CLAUDE_API_KEY };
     this.anthropic = new Anthropic(configuration);
+    // ChatGPT (운영)
+    const CHAT_GPT_API_KEY: string =
+      configService.get<string>('CHAT_GPT_API_KEY');
+    this.openai = new OpenAI({ apiKey: CHAT_GPT_API_KEY });
   }
 
   async createMockResponse(category: string) {
@@ -39,6 +43,21 @@ export default class LLMService {
       return MOCK.LLMSummaryResponse;
     }
     return null;
+  }
+
+  async createLLMCompletionResponse(
+    template: string,
+    message: string,
+  ): Promise<string> {
+    let response = null;
+    switch (process.env.NODE_ENV) {
+      case 'dev':
+        response = await this.createClaudeCompletion(template, message);
+        return response.content[0].text;
+      case 'prod':
+        response = await this.createChatGptCompletion(template, message);
+        return response.choices[0].message.content;
+    }
   }
 
   async createClaudeCompletion(
@@ -79,8 +98,40 @@ export default class LLMService {
       });
   }
 
-  async getResponseContentJson(response: Promise<any>): Promise<any> {
-    const dto: string = (await response).content[0].text;
+  async createChatGptCompletion(
+    template: string,
+    message: string,
+  ): Promise<any> {
+    return await this.openai.chat.completions
+      .create({
+        messages: [
+          { role: 'system', content: template },
+          { role: 'user', content: message },
+        ],
+        model: 'gpt-3.5-turbo-0125',
+        response_format: { type: 'json_object' },
+        max_tokens: 1000,
+        temperature: 0.6,
+        n: 1,
+      })
+      .catch(async (error) => {
+        if (error instanceof OpenAI.APIError) {
+          console.log(error.status);
+          console.log(error.error);
+          console.log(error.message);
+          if (template === QUIZ_MAKER_TEMPLATE) {
+            return this.createMockResponse('LLMCreateQuizResponse');
+          } else if (template === Question_Summary_MAKER_TEMPLATE) {
+            return this.createMockResponse('LLMSummaryResponse');
+          }
+        } else {
+          throw error;
+        }
+      });
+  }
+
+  async getResponseContentJson(responseContent: Promise<string>): Promise<any> {
+    const dto: string = await responseContent;
     const startIndex = dto.indexOf('{');
     const endIndex = dto.lastIndexOf('}') + 1;
     console.log(dto);
@@ -93,13 +144,13 @@ export default class LLMService {
 
   async generateQuiz(script: string): Promise<AIQuizCreateResponseDTO> {
     return this.getResponseContentJson(
-      this.createClaudeCompletion(QUIZ_MAKER_TEMPLATE, script),
+      this.createLLMCompletionResponse(QUIZ_MAKER_TEMPLATE, script),
     );
   }
 
   async generateSummary(script: string): Promise<AISummaryDTO> {
     return this.getResponseContentJson(
-      this.createClaudeCompletion(Question_Summary_MAKER_TEMPLATE, script),
+      this.createLLMCompletionResponse(Question_Summary_MAKER_TEMPLATE, script),
     );
   }
 
