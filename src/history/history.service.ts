@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 import { VideoAnalyticsHistoryEntity } from '../entities/video-analytics-history.entity';
-import { GptUsageHistoryEntity } from '../entities/gpt-usage-history';
 import { QuizResultEntity } from '../entities/quiz-result.entity';
 import { QuizEntity } from 'src/entities/quiz.entity';
 import { ReadHistoriesDTO } from './dto/readHistories.dto';
@@ -20,8 +19,6 @@ export class HistoryService {
     private readonly lectureHistoryRepository: Repository<LectureHistoryEntity>,
     @InjectRepository(VideoAnalyticsHistoryEntity)
     private readonly videoAnalyticsHistoryRepository: Repository<VideoAnalyticsHistoryEntity>,
-    @InjectRepository(GptUsageHistoryEntity)
-    private readonly gptUsageHistoryRepository: Repository<GptUsageHistoryEntity>,
     @InjectRepository(QuizResultEntity)
     private readonly quizResultRepository: Repository<QuizResultEntity>,
   ) {}

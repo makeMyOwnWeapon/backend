@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { LectureHistoryEntity } from './lecture-history.entity';
-import { GptUsageHistoryEntity } from './gpt-usage-history';
 import { DefaultEntity } from './default-entity';
 import { QuizSetEntity } from './quiz-set.entity';
 import { RecommendationEntity } from './recommendation-entity';
@@ -21,12 +20,6 @@ export class MemberEntity extends DefaultEntity {
     (lectureHistory) => lectureHistory.member,
   )
   lectureHistories: LectureHistoryEntity[];
-
-  @OneToMany(
-    () => GptUsageHistoryEntity,
-    (gptUsageHistory) => gptUsageHistory.member,
-  )
-  gptUsageHistories: GptUsageHistoryEntity[];
 
   @OneToMany(() => QuizSetEntity, (quizSets) => quizSets.member)
   quizSets: QuizSetEntity[];

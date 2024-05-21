@@ -7,7 +7,6 @@ import { LectureModule } from '../lecture/lecture.module';
 import { VideoAnalyticsHistoryEntity } from '../entities/video-analytics-history.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
-import { GptUsageHistoryEntity } from '../entities/gpt-usage-history';
 import { QuizResultEntity } from '../entities/quiz-result.entity';
 import { HistoryModule } from 'src/history/history.module';
 import { AppModule } from 'src/app.module';

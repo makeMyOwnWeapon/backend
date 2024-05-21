@@ -3,7 +3,6 @@ import { LectureService } from './lecture.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MainLectureEntity } from '../entities/main-lecture.entity';
 import { SubLectureEntity } from '../entities/sub-lecture.entity';
-import { LectureImageUrlEntity } from '../entities/lecture-image-url.entity';
 import { LectureController } from './lecture.controller';
 import { LectureHistoryEntity } from '../entities/lecture-history.entity';
 import { GptCommentEntity } from '../entities/gpt-comment.entity';
@@ -14,7 +13,6 @@ import { MemberModule } from 'src/member/member.module';
     TypeOrmModule.forFeature([
       MainLectureEntity,
       SubLectureEntity,
-      LectureImageUrlEntity,
       LectureHistoryEntity,
       GptCommentEntity,
     ]),
