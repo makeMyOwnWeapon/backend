@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AnalyticsSaveRequestDto } from './dto/AnalyticsSaveRequest.dto';
-import { AnalyticsAlarmRequestDto } from './dto/AnalyticsAlarmRequest.dto';
 import { MemberService } from '../member/member.service';
 import { HistoryService } from 'src/history/history.service';
 import { AnalyticsService } from '../analytics/analytics.service';
@@ -77,7 +76,6 @@ export class AnalyticsController {
     }
   }
 
-  
   @Public()
   @Post('/image')
   @UseInterceptors(FileInterceptor('file'))

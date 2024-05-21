@@ -6,8 +6,6 @@ import { MemberModule } from '../member/member.module';
 import { LectureModule } from '../lecture/lecture.module';
 import { VideoAnalyticsHistoryEntity } from '../entities/video-analytics-history.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LectureHistoryEntity } from '../entities/lecture-history.entity';
-import { QuizResultEntity } from '../entities/quiz-result.entity';
 import { HistoryModule } from 'src/history/history.module';
 import { AppModule } from 'src/app.module';
 

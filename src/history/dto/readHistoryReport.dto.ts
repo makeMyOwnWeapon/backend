@@ -47,16 +47,14 @@ export class ReadHistoryReportDTO {
   studyEndTime: Date;
 }
 
-export class ReadHistoryReportExtentionDTO {
+export class ReadHistoryReportForExtentionDTO {
   @ApiProperty({ description: 'extention으로 보낼 레포트용 history' })
   reports: ReadHistoryReportDTO;
-  // TODO: 오타 수정!
   @ApiProperty({ description: 'gpt가 생성한 summary' })
   gptSummary: AISummaryDTO;
 }
 
-export class ReadHistoryReportExtentionNoQuizResultDTO {
+export class ReadHistoryReportForExtentionGptErrorDTO {
   @ApiProperty({ description: 'extention으로 보낼 레포트용 history' })
   reports: ReadHistoryReportDTO;
-  // TODO: 오타 수정!
 }

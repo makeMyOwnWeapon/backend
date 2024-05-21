@@ -3,8 +3,8 @@ import { HistoryService } from './history.service';
 import { QuizService } from 'src/quiz/quiz.service';
 import { ReadHistoriesDTO } from './dto/readHistories.dto';
 import {
-  ReadHistoryReportExtentionNoQuizResultDTO,
-  ReadHistoryReportExtentionDTO,
+  ReadHistoryReportForExtentionGptErrorDTO,
+  ReadHistoryReportForExtentionDTO,
 } from './dto/readHistoryReport.dto';
 import { UserRequest } from '../auth/UserRequest';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -28,8 +28,8 @@ export class HistoryController {
     @Req() req: UserRequest,
     @Query('lectureHistoryId') lectureHistoryId: number,
   ): Promise<
-    | ReadHistoryReportExtentionNoQuizResultDTO
-    | ReadHistoryReportExtentionDTO
+      ReadHistoryReportForExtentionGptErrorDTO
+    | ReadHistoryReportForExtentionDTO
     | ReadHistoriesDTO[]
   > {
     const memberId = req.user.id;
@@ -71,7 +71,7 @@ export class HistoryController {
   async readHistoriesInExtension(
     @Query('lectureHistoryId') lectureHistoryId: number,
   ): Promise<
-    ReadHistoryReportExtentionNoQuizResultDTO | ReadHistoryReportExtentionDTO
+    ReadHistoryReportForExtentionGptErrorDTO | ReadHistoryReportForExtentionDTO
   > {
     const quizResult =
       await this.historyService.retrieveQuizResultEntity(lectureHistoryId);
