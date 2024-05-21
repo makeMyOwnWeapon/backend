@@ -2,4 +2,4 @@
 
 ## ERD
 
-<img src="./images/erd-v0.3.png">
+<img src="./images/erd-v0.4.png">
