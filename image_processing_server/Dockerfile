@@ -21,4 +21,4 @@ COPY ./ /app
 
 # Uvicorn을 사용하여 호스트 0.0.0.0, 포트 8000에서 애플리케이션 실행
 # main:app은 main.py 파일의 FastAPI 인스턴스 이름이 app임을 의미
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
