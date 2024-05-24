@@ -47,15 +47,9 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-pm2 kill
+NODE_ENV=prod pm2 reload ./dist/main.js --name "loa" -e err.log -o out.log
 if [ $? -ne 0 ]; then
-  echo "PM2 프로세스 종료 중 오류가 발생했습니다."
-  exit 1
-fi
-
-NODE_ENV=prod pm2 start ./dist/main.js --name "loa" -e err.log -o out.log
-if [ $? -ne 0 ]; then
-  echo "애플리케이션 시작 중 오류가 발생했습니다."
+  echo "애플리케이션 재시작 중 오류가 발생했습니다."
   exit 1
 fi
 
